@@ -37,9 +37,6 @@ If you don't want a type to be included in the model, you can exclude it:
 
 ### Excluding from migrations
 
-> [!NOTE]
-> The ability to exclude tables from migrations was introduced in EF Core 5.0.
-
 It is sometimes useful to have the same entity type mapped in multiple `DbContext` types. This is especially true when using [bounded contexts](https://www.martinfowler.com/bliki/BoundedContext.html), for which it is common to have a different `DbContext` type for each bounded context.
 
 [!code-csharp[Main](../../../samples/core/Modeling/EntityTypes/FluentAPI/TableExcludeFromMigrations.cs?name=TableExcludeFromMigrations&highlight=4)]
@@ -90,15 +87,15 @@ Note that setting the default schema will also affect other database objects, su
 
 Entity types can be mapped to database views using the Fluent API.
 
-> [!Note]
+> [!NOTE]
 > EF will assume that the referenced view already exists in the database, it will not create it automatically in a migration.
 
 [!code-csharp[Main](../../../samples/core/Modeling/EntityTypes/FluentAPI/ViewNameAndSchema.cs?name=ViewNameAndSchema&highlight=1)]
 
- Mapping to a view will remove the default table mapping, but starting with EF 5.0 the entity type can also be mapped to a table explicitly. In this case the query mapping will be used for queries and the table mapping will be used for updates.
+ Mapping to a view will remove the default table mapping, but the entity type can also be mapped to a table explicitly. In this case the query mapping will be used for queries and the table mapping will be used for updates.
 
 > [!TIP]
-> To test entity types mapped to views using the in-memory provider map them to a query via `ToInMemoryQuery`. See a [runnable sample](https://github.com/dotnet/EntityFramework.Docs/tree/main/samples/core/Miscellaneous/Testing/ItemsWebApi/) using this technique for more details.
+> To test keyless entity types mapped to views using the in-memory provider, map them to a query via <xref:Microsoft.EntityFrameworkCore.InMemoryEntityTypeBuilderExtensions.ToInMemoryQuery*>. See the [in-memory provider docs](xref:core/testing/testing-without-the-database#in-memory-provider) for more information.
 
 ## Table-valued function mapping
 
@@ -149,9 +146,6 @@ You can set an arbitrary text comment that gets set on the database table, allow
 
 ### [Data Annotations](#tab/data-annotations)
 
-> [!NOTE]
-> Setting comments via data annotations was introduced in EF Core 5.0.
-
 [!code-csharp[Main](../../../samples/core/Modeling/EntityTypes/DataAnnotations/TableComment.cs?name=TableComment&highlight=1)]
 
 ### [Fluent API](#tab/fluent-api)
@@ -161,9 +155,6 @@ You can set an arbitrary text comment that gets set on the database table, allow
 ***
 
 ## Shared-type entity types
-
-> [!NOTE]
-> Support for Shared-type entity types was introduced in EF Core 5.0.
 
 Entity types that use the same CLR type are known as shared-type entity types. These entity types need to be configured with a unique name, which must be supplied whenever the shared-type entity type is used, in addition to the CLR type. This means that the corresponding `DbSet` property must be implemented using a `Set` call.
 

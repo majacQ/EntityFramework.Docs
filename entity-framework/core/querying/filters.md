@@ -19,6 +19,9 @@ The following example shows how to use Global Query Filters to implement multi-t
 > [!TIP]
 > You can view this article's [sample](https://github.com/dotnet/EntityFramework.Docs/tree/main/samples/core/Querying/QueryFilters) on GitHub.
 
+> [!NOTE]
+> Multi-tenancy is used here as a simple example. There is also an article with comprehensive guidance for [multi-tenancy in EF Core applications](xref:core/miscellaneous/multitenancy).
+
 First, define the entities:
 
 [!code-csharp[Main](../../../samples/core/Querying/QueryFilters/Entities.cs#Entities)]
@@ -106,7 +109,7 @@ This way matching filters are applied to both `Blog` and `Post`. `Post`s that co
 
 ## Disabling Filters
 
-Filters may be disabled for individual LINQ queries by using the <xref:Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.IgnoreQueryFilters%2A> operator.
+Filters may be disabled for individual LINQ queries by using the <xref:Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.IgnoreQueryFilters*> operator.
 
 [!code-csharp[Main](../../../samples/core/Querying/QueryFilters/Program.cs#IgnoreFilters)]
 

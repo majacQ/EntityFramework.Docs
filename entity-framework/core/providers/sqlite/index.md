@@ -1,7 +1,7 @@
 ---
 title: SQLite Database Provider - EF Core
 description: Information on the Entity Framework Core SQLite database provider
-author: bricelam
+author: SamMonoRT
 ms.date: 10/27/2016
 uid: core/providers/sqlite/index
 ---
@@ -29,7 +29,7 @@ Install-Package Microsoft.EntityFrameworkCore.Sqlite
 
 ## Supported Database Engines
 
-* SQLite (3.7 onwards)
+* SQLite (3.46.1 onwards)
 
 ## Limitations
 

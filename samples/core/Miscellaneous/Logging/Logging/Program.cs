@@ -1,39 +1,39 @@
 ﻿using System;
+using System.Threading.Tasks;
 
-namespace EFLogging
+namespace EFLogging;
+
+public class Program
 {
-    public class Program
+    public static async Task Main()
     {
-        public static void Main()
+        using (var db = new BloggingContext())
         {
-            using (var db = new BloggingContext())
-            {
-                db.Database.EnsureCreated();
-                db.Blogs.Add(new Blog { Url = "http://sample.com" });
-                db.SaveChanges();
-            }
+            await db.Database.EnsureCreatedAsync();
+            db.Blogs.Add(new Blog { Url = "http://sample.com" });
+            await db.SaveChangesAsync();
+        }
 
-            using (var db = new BloggingContext())
+        using (var db = new BloggingContext())
+        {
+            foreach (var blog in db.Blogs)
             {
-                foreach (var blog in db.Blogs)
-                {
-                    Console.WriteLine(blog.Url);
-                }
+                Console.WriteLine(blog.Url);
             }
+        }
 
-            using (var db = new BloggingContextWithFiltering())
-            {
-                db.Database.EnsureCreated();
-                db.Blogs.Add(new Blog { Url = "http://sample.com" });
-                db.SaveChanges();
-            }
+        using (var db = new BloggingContextWithFiltering())
+        {
+            await db.Database.EnsureCreatedAsync();
+            db.Blogs.Add(new Blog { Url = "http://sample.com" });
+            await db.SaveChangesAsync();
+        }
 
-            using (var db = new BloggingContextWithFiltering())
+        using (var db = new BloggingContextWithFiltering())
+        {
+            foreach (var blog in db.Blogs)
             {
-                foreach (var blog in db.Blogs)
-                {
-                    Console.WriteLine(blog.Url);
-                }
+                Console.WriteLine(blog.Url);
             }
         }
     }

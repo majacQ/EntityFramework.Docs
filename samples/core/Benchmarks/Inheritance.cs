@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,41 +12,60 @@ public class Inheritance
     public int RowsPerEntityType { get; set; }
 
     [GlobalSetup(Target = nameof(TPH))]
-    public void SetupTPH()
+    public async Task SetupTPH()
     {
         Console.WriteLine("Setting up database...");
         using var context = new TPHContext();
-        context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
-        context.SeedData(RowsPerEntityType);
+        await context.Database.EnsureDeletedAsync();
+        await context.Database.EnsureCreatedAsync();
+        await context.SeedData(RowsPerEntityType);
         Console.WriteLine("Setup complete.");
     }
 
     [GlobalSetup(Target = nameof(TPT))]
-    public void SetupTPT()
+    public async Task SetupTPT()
     {
         Console.WriteLine("Setting up database...");
         using var context = new TPTContext();
-        context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
-        context.SeedData(RowsPerEntityType);
+        await context.Database.EnsureDeletedAsync();
+        await context.Database.EnsureCreatedAsync();
+        await context.SeedData(RowsPerEntityType);
+        Console.WriteLine("Setup complete.");
+    }
+
+    [GlobalSetup(Target = nameof(TPC))]
+    public async Task SetupTPC()
+    {
+        Console.WriteLine("Setting up database...");
+        using var context = new TPCContext();
+        await context.Database.EnsureDeletedAsync();
+        await context.Database.EnsureCreatedAsync();
+        await context.SeedData(RowsPerEntityType);
         Console.WriteLine("Setup complete.");
     }
 
     [Benchmark]
-    public List<Root> TPH()
+    public async Task<List<Root>> TPH()
     {
         using var context = new TPHContext();
 
-        return context.Roots.ToList();
+        return await context.Roots.ToListAsync();
     }
 
     [Benchmark]
-    public List<Root> TPT()
+    public async Task<List<Root>> TPT()
     {
         using var context = new TPTContext();
 
-        return context.Roots.ToList();
+        return await context.Roots.ToListAsync();
+    }
+
+    [Benchmark]
+    public async Task<List<Root>> TPC()
+    {
+        using var context = new TPCContext();
+
+        return await context.Roots.ToListAsync();
     }
 
     public abstract class InheritanceContext : DbContext
@@ -53,23 +73,8 @@ public class Inheritance
         public DbSet<Root> Roots { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Blogging;Trusted_Connection=True");
+            => optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=Blogging;Trusted_Connection=True;ConnectRetryCount=0");
 
-        public void SeedData(int rowsPerEntityType)
-        {
-            Set<Root>().AddRange(Enumerable.Range(0, rowsPerEntityType).Select(i => new Root { RootProperty = i }));
-            Set<Child1>().AddRange(Enumerable.Range(0, rowsPerEntityType).Select(i => new Child1 { Child1Property = i }));
-            Set<Child1A>().AddRange(Enumerable.Range(0, rowsPerEntityType).Select(i => new Child1A { Child1AProperty = i }));
-            Set<Child1B>().AddRange(Enumerable.Range(0, rowsPerEntityType).Select(i => new Child1B { Child1BProperty = i }));
-            Set<Child2>().AddRange(Enumerable.Range(0, rowsPerEntityType).Select(i => new Child2 { Child2Property = i }));
-            Set<Child2A>().AddRange(Enumerable.Range(0, rowsPerEntityType).Select(i => new Child2A { Child2AProperty = i }));
-            Set<Child2B>().AddRange(Enumerable.Range(0, rowsPerEntityType).Select(i => new Child2B { Child2BProperty = i }));
-            SaveChanges();
-        }
-    }
-
-    public class TPHContext : InheritanceContext
-    {
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Child1>();
@@ -79,18 +84,39 @@ public class Inheritance
             modelBuilder.Entity<Child2A>();
             modelBuilder.Entity<Child2B>();
         }
+
+        public async Task SeedData(int rowsPerEntityType)
+        {
+            Set<Root>().AddRange(Enumerable.Range(0, rowsPerEntityType).Select(i => new Root { RootProperty = i }));
+            Set<Child1>().AddRange(Enumerable.Range(0, rowsPerEntityType).Select(i => new Child1 { Child1Property = i }));
+            Set<Child1A>().AddRange(Enumerable.Range(0, rowsPerEntityType).Select(i => new Child1A { Child1AProperty = i }));
+            Set<Child1B>().AddRange(Enumerable.Range(0, rowsPerEntityType).Select(i => new Child1B { Child1BProperty = i }));
+            Set<Child2>().AddRange(Enumerable.Range(0, rowsPerEntityType).Select(i => new Child2 { Child2Property = i }));
+            Set<Child2A>().AddRange(Enumerable.Range(0, rowsPerEntityType).Select(i => new Child2A { Child2AProperty = i }));
+            Set<Child2B>().AddRange(Enumerable.Range(0, rowsPerEntityType).Select(i => new Child2B { Child2BProperty = i }));
+            await SaveChangesAsync();
+        }
+    }
+
+    public class TPHContext : InheritanceContext
+    {
     }
 
     public class TPTContext : InheritanceContext
     {
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Child1>().ToTable("Child1");
-            modelBuilder.Entity<Child1A>().ToTable("Child1A");
-            modelBuilder.Entity<Child1B>().ToTable("Child1B");
-            modelBuilder.Entity<Child2>().ToTable("Child2");
-            modelBuilder.Entity<Child2A>().ToTable("Child2A");
-            modelBuilder.Entity<Child2B>().ToTable("Child2B");
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Root>().UseTptMappingStrategy();
+        }
+    }
+
+    public class TPCContext : InheritanceContext
+    {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Root>().UseTpcMappingStrategy();
         }
     }
 
