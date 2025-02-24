@@ -1,7 +1,7 @@
 ---
 title: Code First Migrations in Team Environments - EF6
 description: Code First Migrations in Team Environments in Entity Framework 6
-author: ajcvickers
+author: SamMonoRT
 ms.date: 10/23/2016
 uid: ef6/modeling/code-first/migrations/teams
 ---
@@ -28,18 +28,6 @@ Of course, if you have team members that aren’t generating migrations, there i
 The bottom line is that automatic migrations initially look good in team environments, but in reality they just don’t work. If you want to know why, keep reading – if not, then you can skip to the next section.
 
 Automatic migrations allows you to have your database schema updated to match the current model without the need to generate code files (code-based migrations). Automatic migrations would work very well in a team environment if you only ever used them and never generated any code-based migrations. The problem is that automatic migrations are limited and don’t handle a number of operations – property/column renames, moving data to another table, etc. To handle these scenarios you end up generating code-based migrations (and editing the scaffolded code) that are mixed in between changes that are handled by automatic migrations. This makes it near on impossible to merge changes when two developers check in migrations.
-
-## Screencasts
-
-If you'd rather watch a screencast than read this article, the following two videos cover the same content as this article.
-
-### Video One: "Migrations - Under the Hood"
-
-[This screencast](https://channel9.msdn.com/blogs/ef/migrations-under-the-hood) covers how migrations tracks and uses information about the model to detect model changes.
-
-### Video Two: "Migrations - Team Environments"
-
-Building on the concepts from the previous video, [this screencast](https://channel9.msdn.com/blogs/ef/migrations-team-environments) covers the issues that arise in a team environment and how to solve them.
 
 ## Understanding how migrations works
 
@@ -89,7 +77,7 @@ Issues start to arise when you have multiple developers making changes to the EF
 
 First let’s look at a concrete example of such a merge conflict. We’ll continue on with the example we looked at earlier. As a starting point let’s assume the changes from the previous section were checked in by the original developer. We’ll track two developers as they make changes to code base.
 
-We’ll track the EF model and the migrations thru a number of changes. For a starting point, both developers have synced to the source control repository, as depicted in the following graphic.
+We’ll track the EF model and the migrations through a number of changes. For a starting point, both developers have synced to the source control repository, as depicted in the following graphic.
 
 ![Starting Point](~/ef6/media/startingpoint.png)
 

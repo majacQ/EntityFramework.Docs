@@ -1,59 +1,77 @@
 ---
 title: Function Mappings - SQLite Database Provider - EF Core
 description: Function Mappings of the SQLite EF Core database provider
-author: bricelam
-ms.date: 11/15/2021
+author: SamMonoRT
+ms.date: 7/26/2023
 uid: core/providers/sqlite/functions
 ---
 # Function Mappings of the SQLite EF Core Provider
 
 This page shows which .NET members are translated into which SQL functions when using the SQLite provider.
 
+## Aggregate functions
+
+.NET                                                  | SQL                                | Added in
+----------------------------------------------------- | ---------------------------------- | --------
+group.Average(x => x.Property)                        | AVG(Property)
+group.Average(x => x.DecimalProperty)                 | ef_avg(DecimalProperty)            | EF Core 9.0
+group.Count()                                         | COUNT(*)
+group.LongCount()                                     | COUNT(*)
+group.Max(x => x.Property)                            | MAX(Property)
+group.Min(x => x.Property)                            | MIN(Property)
+group.Sum(x => x.Property)                            | SUM(Property)
+group.Sum(x => x.DecimalProperty)                     | ef_sum(DecimalProperty)            | EF Core 9.0
+string.Concat(group.Select(x => x.Property))          | group_concat(Property, '')         | EF Core 7.0
+string.Join(separator, group.Select(x => x.Property)) | group_concat(Property, @separator) | EF Core 7.0
+
 ## Binary functions
 
 .NET                                           | SQL                                  | Added in
 ---------------------------------------------- | ------------------------------------ | --------
-bytes.Contains(value)                          | instr(@bytes, char(@value)) > 0      | EF Core 5.0
-bytes.Length                                   | length(@bytes)                       | EF Core 5.0
-bytes.SequenceEqual(second)                    | @bytes = @second                     | EF Core 5.0
-EF.Functions.Hex(bytes)                        | hex(@bytes)                          | EF Core 6.0
-EF.Functions.Substr(bytes, startIndex)         | substr(@bytes, @startIndex)          | EF Core 6.0
-EF.Functions.Substr(bytes, startIndex, length) | substr(@bytes, @startIndex, @length) | EF Core 6.0
+bytes.Contains(value)                          | instr(@bytes, char(@value)) > 0
+bytes.Length                                   | length(@bytes)
+bytes.SequenceEqual(second)                    | @bytes = @second
+EF.Functions.Hex(bytes)                        | hex(@bytes)
+EF.Functions.Substr(bytes, startIndex)         | substr(@bytes, @startIndex)
+EF.Functions.Substr(bytes, startIndex, length) | substr(@bytes, @startIndex, @length)
+EF.Functions.Unhex(value)                      | unhex(@value)                        | EF Core 8.0
+EF.Functions.Unhex(value, ignoreChars)         | unhex(@value, @ignoreChars)          | EF Core 8.0
 
 ## Conversion functions
 
-.NET                      | SQL                           | Added in
-------------------------- | ----------------------------- | --------
-boolValue.ToString()      | CAST(@boolValue AS TEXT)      | EF Core 6.0
-byteValue.ToString()      | CAST(@byteValue AS TEXT)      | EF Core 6.0
-bytes.ToString()          | CAST(@bytes AS TEXT)          | EF Core 6.0
-charValue.ToString()      | CAST(@charValue AS TEXT)      | EF Core 6.0
-dateTime.ToString()       | CAST(@dateTime AS TEXT)       | EF Core 6.0
-dateTimeOffset.ToString() | CAST(@dateTimeOffset AS TEXT) | EF Core 6.0
-decimalValue.ToString()   | CAST(@decimalValue AS TEXT)   | EF Core 6.0
-doubleValue.ToString()    | CAST(@doubleValue AS TEXT)    | EF Core 6.0
-floatValue.ToString()     | CAST(@floatValue AS TEXT)     | EF Core 6.0
-guid.ToString()           | CAST(@guid AS TEXT)           | EF Core 6.0
-intValue.ToString()       | CAST(@intValue AS TEXT)       | EF Core 6.0
-longValue.ToString()      | CAST(@longValue AS TEXT)      | EF Core 6.0
-sbyteValue.ToString()     | CAST(@sbyteValue AS TEXT)     | EF Core 6.0
-shortValue.ToString()     | CAST(@shortValue AS TEXT)     | EF Core 6.0
-timeSpan.ToString()       | CAST(@timeSpan AS TEXT)       | EF Core 6.0
-uintValue.ToString()      | CAST(@uintValue AS TEXT)      | EF Core 6.0
-ushortValue.ToString()    | CAST(@ushortValue AS TEXT)    | EF Core 6.0
+.NET                      | SQL
+------------------------- | ---
+boolValue.ToString()      | CAST(@boolValue AS TEXT)
+byteValue.ToString()      | CAST(@byteValue AS TEXT)
+bytes.ToString()          | CAST(@bytes AS TEXT)
+charValue.ToString()      | CAST(@charValue AS TEXT)
+dateTime.ToString()       | CAST(@dateTime AS TEXT)
+dateTimeOffset.ToString() | CAST(@dateTimeOffset AS TEXT)
+decimalValue.ToString()   | CAST(@decimalValue AS TEXT)
+doubleValue.ToString()    | CAST(@doubleValue AS TEXT)
+floatValue.ToString()     | CAST(@floatValue AS TEXT)
+guid.ToString()           | CAST(@guid AS TEXT)
+intValue.ToString()       | CAST(@intValue AS TEXT)
+longValue.ToString()      | CAST(@longValue AS TEXT)
+sbyteValue.ToString()     | CAST(@sbyteValue AS TEXT)
+shortValue.ToString()     | CAST(@shortValue AS TEXT)
+timeSpan.ToString()       | CAST(@timeSpan AS TEXT)
+uintValue.ToString()      | CAST(@uintValue AS TEXT)
+ushortValue.ToString()    | CAST(@ushortValue AS TEXT)
 
 ## Date and time functions
 
 .NET                            | SQL                                                                      | Added in
 ------------------------------- | ------------------------------------------------------------------------ | --------
-dateOnly.AddDays(value)         | date(@dateOnly, @value \|\| ' days')                                     | EF Core 6.0
-dateOnly.AddMonths(months)      | date(@dateOnly, @months \|\| ' months')                                  | EF Core 6.0
-dateOnly.AddYears(value)        | date(@dateOnly, @value \|\| ' years')                                    | EF Core 6.0
-dateOnly.Day                    | strftime('%d', @dateOnly)                                                | EF Core 6.0
-dateOnly.DayOfWeek              | strftime('%w', @dateOnly)                                                | EF Core 6.0
-dateOnly.DayOfYear              | strftime('%j', @dateOnly)                                                | EF Core 6.0
-dateOnly.Month                  | strftime('%m', @dateOnly)                                                | EF Core 6.0
-dateOnly.Year                   | strftime('%Y', @dateOnly)                                                | EF Core 6.0
+dateOnly.AddDays(value)         | date(@dateOnly, @value \|\| ' days')
+dateOnly.AddMonths(months)      | date(@dateOnly, @months \|\| ' months')
+dateOnly.AddYears(value)        | date(@dateOnly, @value \|\| ' years')
+dateOnly.Day                    | strftime('%d', @dateOnly)
+dateOnly.DayOfWeek              | strftime('%w', @dateOnly)
+dateOnly.DayOfYear              | strftime('%j', @dateOnly)
+DateOnly.FromDateTime(dateTime) | date(@dateTime)                                                          | EF Core 8.0
+dateOnly.Month                  | strftime('%m', @dateOnly)
+dateOnly.Year                   | strftime('%Y', @dateOnly)
 DateTime.Now                    | datetime('now', 'localtime')
 DateTime.Today                  | datetime('now', 'localtime', 'start of day')
 DateTime.UtcNow                 | datetime('now')
@@ -83,46 +101,71 @@ dateTime.Year                   | strftime('%Y', @dateTime)
 
 ## Numeric functions
 
-.NET                   | SQL                                   | Added in
----------------------- | ------------------------------------- | --------
--decimalValue          | ef_negate(@decimalValue)              | EF Core 5.0
-decimalValue - d       | ef_add(@decimalValue, ef_negate(@d))  | EF Core 5.0
-decimalValue * d       | ef_multiply(@decimalValue, @d)        | EF Core 5.0
-decimalValue / d       | ef_divide(@decimalValue, @d)          | EF Core 5.0
-decimalValue % d       | ef_mod(@decimalValue, @d)             | EF Core 5.0
-decimalValue + d       | ef_add(@decimalValue, @d)             | EF Core 5.0
-decimalValue < d       | ef_compare(@decimalValue, @d) < 0     | EF Core 5.0
-decimalValue <= d      | ef_compare(@decimalValue, @d) <= 0    | EF Core 5.0
-decimalValue > d       | ef_compare(@decimalValue, @d) > 0     | EF Core 5.0
-decimalValue >= d      | ef_compare(@decimalValue, @d) >= 0    | EF Core 5.0
-doubleValue % d        | ef_mod(@doubleValue, @d)              | EF Core 5.0
-EF.Functions.Random()  | abs(random() / 9223372036854780000.0) | EF Core 6.0
-floatValue % d         | ef_mod(@floatValue, @d)               | EF Core 5.0
-Math.Abs(value)        | abs(@value)
-Math.Max(val1, val2)   | max(@val1, @val2)
-Math.Min(val1, val2)   | min(@val1, @val2)
-Math.Round(d)          | round(@d)
-Math.Round(d, digits)  | round(@d, @digits)
-MathF.Abs(x)           | abs(@x)                               | EF Core 6.0
-MathF.Max(x, y)        | max(@x, @y)                           | EF Core 6.0
-MathF.Min(x, y)        | min(@x, @y)                           | EF Core 6.0
-MathF.Round(x)         | round(@x)                             | EF Core 6.0
-MathF.Round(x, digits) | round(@x, @digits)                    | EF Core 6.0
+.NET                             | SQL                                  | Added in
+-------------------------------- | ------------------------------------ | --------
+-decimalValue                    | ef_negate(@decimalValue)
+decimalValue - d                 | ef_add(@decimalValue, ef_negate(@d))
+decimalValue * d                 | ef_multiply(@decimalValue, @d)
+decimalValue / d                 | ef_divide(@decimalValue, @d)
+decimalValue % d                 | ef_mod(@decimalValue, @d)
+decimalValue + d                 | ef_add(@decimalValue, @d)
+decimalValue < d                 | ef_compare(@decimalValue, @d) < 0
+decimalValue <= d                | ef_compare(@decimalValue, @d) <= 0
+decimalValue > d                 | ef_compare(@decimalValue, @d) > 0
+decimalValue >= d                | ef_compare(@decimalValue, @d) >= 0
+double.DegreesToRadians(degrees) | radians(@degrees)                     | EF Core 8.0
+double.RadiansToDegrees(radians) | degrees(@dradians)                    | EF Core 8.0
+doubleValue % d                  | mod(@doubleValue, @d)
+EF.Functions.Random()            | abs(random() / 9223372036854780000.0)
+Math.Abs(value)                  | abs(@value)
+Math.Acos(value)                 | acos(@value)                          | EF Core 8.0
+Math.Acosh(d)                    | acosh(@d)                             | EF Core 8.0
+Math.Asin(d)                     | asin(@d)                              | EF Core 8.0
+Math.Asinh(d)                    | asinh(@d)                             | EF Core 8.0
+Math.Atan(d)                     | atan(@d)                              | EF Core 8.0
+Math.Atan2(y, x)                 | atan2(@y, @x)                         | EF Core 8.0
+Math.Atanh(d)                    | atanh(@d)                             | EF Core 8.0
+Math.Ceiling(d)                  | ceiling(@d)                           | EF Core 8.0
+Math.Cos(d)                      | cos(@d)                               | EF Core 8.0
+Math.Cosh(value)                 | cosh(@value)                          | EF Core 8.0
+Math.Exp(d)                      | exp(@d)                               | EF Core 8.0
+Math.Floor(d)                    | floor(@d)                             | EF Core 8.0
+Math.Log(d)                      | ln(@d)                                | EF Core 8.0
+Math.Log(a, newBase)             | log(@newBase, @a)                     | EF Core 8.0
+Math.Log2(x)                     | log2(@x)                              | EF Core 8.0
+Math.Log10(d)                    | log10(@d)                             | EF Core 8.0
+Math.Max(val1, val2)             | max(@val1, @val2)
+Math.Min(val1, val2)             | min(@val1, @val2)
+Math.Pow(x, y)                   | pow(@x, @y)                           | EF Core 8.0
+Math.Round(d)                    | round(@d)
+Math.Round(d, digits)            | round(@d, @digits)
+Math.Sign(d)                     | sign(@d)                              | EF Core 8.0
+Math.Sin(a)                      | sin(@a)                               | EF Core 8.0
+Math.Sinh(value)                 | sinh(@value)                          | EF Core 8.0
+Math.Sqrt(d)                     | sqrt(@d)                              | EF Core 8.0
+Math.Tan(a)                      | tan(@a)                               | EF Core 8.0
+Math.Tanh(value)                 | tanh(@value)                          | EF Core 8.0
+Math.Truncate(d)                 | trunc(@d)                             | EF Core 8.0
 
 > [!TIP]
-> SQL functions prefixed with *ef* are created by EF Core.
+> In addition to the methods listed here, corresponding [generic math](/dotnet/standard/generics/math) implementations
+> and <xref:System.MathF> methods are also translated. For example, `Math.Sin`, `MathF.Sin`, `double.Sin`,
+> and `float.Sin` all map to the `sin` function in SQL.
+
+> [!TIP]
+> SQL functions prefixed with `ef_` are created by EF Core.
 
 ## String functions
 
-.NET                                                         | SQL                                                    | Added in
------------------------------------------------------------- | ------------------------------------------------------ | --------
-char.ToLower(c)                                              | lower(@c)                                              | EF Core 6.0
-char.ToUpper(c)                                              | upper(@c)                                              | EF Core 6.0
-EF.Functions.Collate(operand, collation)                     | @operand COLLATE @collation                            | EF Core 5.0
-EF.Functions.Glob(matchExpression, pattern)                  | glob(@pattern, @matchExpression)                       | EF Core 6.0
+.NET                                                         | SQL
+------------------------------------------------------------ | ---
+char.ToLower(c)                                              | lower(@c)
+char.ToUpper(c)                                              | upper(@c)
+EF.Functions.Collate(operand, collation)                     | @operand COLLATE @collation
+EF.Functions.Glob(matchExpression, pattern)                  | @matchExpression GLOB @pattern
 EF.Functions.Like(matchExpression, pattern)                  | @matchExpression LIKE @pattern
 EF.Functions.Like(matchExpression, pattern, escapeCharacter) | @matchExpression LIKE @pattern ESCAPE @escapeCharacter
-Regex.IsMatch(input, pattern)                                | regexp(@pattern, @input)                               | EF Core 6.0
+Regex.IsMatch(input, pattern)                                | @input REGEXP @pattern
 string.Compare(strA, strB)                                   | CASE WHEN @strA = @strB THEN 0 ... END
 string.Concat(str0, str1)                                    | @str0 \|\| @str1
 string.IsNullOrEmpty(value)                                  | @value IS NULL OR @value = ''
@@ -130,13 +173,13 @@ string.IsNullOrWhiteSpace(value)                             | @value IS NULL OR
 stringValue.CompareTo(strB)                                  | CASE WHEN @stringValue = @strB THEN 0 ... END
 stringValue.Contains(value)                                  | instr(@stringValue, @value) > 0
 stringValue.EndsWith(value)                                  | @stringValue LIKE '%' \|\| @value
-stringValue.FirstOrDefault()                                 | substr(@stringValue, 1, 1)                             | EF Core 5.0
+stringValue.FirstOrDefault()                                 | substr(@stringValue, 1, 1)
 stringValue.IndexOf(value)                                   | instr(@stringValue, @value) - 1
-stringValue.LastOrDefault()                                  | substr(@stringValue, length(@stringValue), 1)          | EF Core 5.0
+stringValue.LastOrDefault()                                  | substr(@stringValue, length(@stringValue), 1)
 stringValue.Length                                           | length(@stringValue)
 stringValue.Replace(oldValue, newValue)                      | replace(@stringValue, @oldValue, @newValue)
 stringValue.StartsWith(value)                                | @stringValue LIKE @value \|\| '%'
-stringValue.Substring(startIndex)                            | substr(@stringValue, @startIndex + 1)                  | EF Core 6.0
+stringValue.Substring(startIndex)                            | substr(@stringValue, @startIndex + 1)
 stringValue.Substring(startIndex, length)                    | substr(@stringValue, @startIndex + 1, @length)
 stringValue.ToLower()                                        | lower(@stringValue)
 stringValue.ToUpper()                                        | upper(@stringValue)

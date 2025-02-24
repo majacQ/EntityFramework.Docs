@@ -1,7 +1,7 @@
 ---
 title: Logging and intercepting database operations - EF6
 description: Logging and intercepting database operations in Entity Framework 6
-author: ajcvickers
+author: SamMonoRT
 ms.date: 10/23/2016
 uid: ef6/fundamentals/logging-and-interception
 ---
@@ -45,7 +45,7 @@ using (var context = new BlogContext())
 
     blog.Posts.Add(new Post { Title = "I do not like them!" });
 
-    context.SaveChangesAsync().Wait();
+    context.SaveChanges();
 }
 ```  
 

@@ -1,7 +1,7 @@
 ---
 title: Testability and Entity Framework 4.0 - EF6
 description: Testability and Entity Framework 4.0
-author: ajcvickers
+author: SamMonoRT
 ms.date: 10/23/2016
 ---
 # Testability and Entity Framework 4.0
@@ -955,12 +955,11 @@ In this paper we’ve demonstrated several approaches to creating testable code 
 
 ### Additional Resources
 
--   Robert C. Martin, “ [The Single Responsibility Principle](https://www.objectmentor.com/resources/articles/srp.pdf)”
 -   Martin Fowler, [Catalog of Patterns](https://www.martinfowler.com/eaaCatalog/index.html) from *Patterns of Enterprise Application Architecture*
 -   Griffin Caprio, “ [Dependency Injection](https://msdn.microsoft.com/magazine/cc163739.aspx)”
 -   Data Programmability Blog, “ [Walkthrough: Test Driven Development with the Entity Framework 4.0](/archive/blogs/adonet/walkthrough-test-driven-development-with-the-entity-framework-4-0)”.
 -   Data Programmability Blog, “ [Using Repository and Unit of Work patterns with Entity Framework 4.0](/archive/blogs/adonet/using-repository-and-unit-of-work-patterns-with-entity-framework-4-0)”
--   Aaron Jensen, “ [Introducing Machine Specifications](http://codebetter.com/blogs/aaron.jensen/archive/2008/05/08/introducing-machine-specifications-or-mspec-for-short.aspx)”
+-   Aaron Jensen, “ [Introducing Machine Specifications](https://web.archive.org/web/20210516223054/http://codebetter.com/aaronjensen/2008/05/08/introducing-machine-specifications-or-mspec-for-short/)”
 -   Eric Lee, “ [BDD with MSTest](https://saintgimp.org/2009/01/20/bdd-with-mstest/)”
 -   Eric Evans, “ [Domain Driven Design](https://books.google.com/books?id=7dlaMs0SECsC&printsec=frontcover&dq=evans%20domain%20driven%20design&hl=en&ei=cHztS6C8KIaglAfA_dS1CA&sa=X&oi=book_result&ct=result&resnum=1&ved=0CCoQ6AEwAA)”
 -   Martin Fowler, “ [Mocks Aren’t Stubs](https://martinfowler.com/articles/mocksArentStubs.html)”

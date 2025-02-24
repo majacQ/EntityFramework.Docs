@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
+using Microsoft.EntityFrameworkCore.Update;
 
 #region snippet_CreateUserOperation
 public class CreateUserOperation : MigrationOperation
@@ -33,8 +34,8 @@ public class MyMigrationsSqlGenerator : SqlServerMigrationsSqlGenerator
 {
     public MyMigrationsSqlGenerator(
         MigrationsSqlGeneratorDependencies dependencies,
-        IRelationalAnnotationProvider migrationsAnnotations)
-        : base(dependencies, migrationsAnnotations)
+        ICommandBatchPreparer commandBatchPreparer)
+        : base(dependencies, commandBatchPreparer)
     {
     }
 
@@ -73,7 +74,7 @@ public class MyMigrationsSqlGenerator : SqlServerMigrationsSqlGenerator
 
 internal class CustomOperationContext : DbContext
 {
-    private readonly string _connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Sample";
+    private readonly string _connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=Sample;ConnectRetryCount=0";
 
     #region snippet_OnConfiguring
     protected override void OnConfiguring(DbContextOptionsBuilder options)

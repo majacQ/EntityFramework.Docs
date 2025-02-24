@@ -17,11 +17,11 @@ EF makes it very easy to capture command execution times, via either [simple log
 
 ### [Simple logging](#tab/simple-logging)
 
-[!code-csharp[Main](../../../samples/core/Performance/BloggingContext.cs#SimpleLogging)]
+[!code-csharp[Main](../../../samples/core/Performance/Other/BloggingContext.cs#SimpleLogging)]
 
 ### [Microsoft.Extensions.Logging](#tab/microsoft-extensions-logging)
 
-[!code-csharp[Main](../../../samples/core/Performance/ExtensionsLoggingContext.cs#ExtensionsLogging)]
+[!code-csharp[Main](../../../samples/core/Performance/Other/ExtensionsLoggingContext.cs#ExtensionsLogging)]
 
 ***
 
@@ -81,11 +81,11 @@ While the above information is specific to SQL Server, other databases typically
 > [!IMPORTANT]
 > Databases sometimes generate different query plans depending on actual data in the database. For example, if a table contains only a few rows, a database may choose not to use an index on that table, but to perform a full table scan instead. If analyzing query plans on a test database, always make sure it contains data that is similar to your production system.
 
-## Event counters
+## Metrics
 
-The above sections focused on how to get information about your commands, and how these commands are executed in the database. In addition to that, EF exposes a set of *event counters* which provide more lower-level information on what's happening inside EF itself, and how your application is using it. These counters can be very useful for diagnosing specific performance issues and performance anomalies, such as [query caching issues](xref:core/performance/advanced-performance-topics#dynamically-constructed-queries) which cause constant recompilation, undisposed DbContext leaks, and others.
+The above sections focused on how to get information about your commands, and how these commands are executed in the database. In addition to that, EF exposes a set of *metrics* which provide more lower-level information on what's happening inside EF itself, and how your application is using it. These metrics can be very useful for diagnosing specific performance issues and performance anomalies, such as [query caching issues](xref:core/performance/advanced-performance-topics#dynamically-constructed-queries) which cause constant recompilation, undisposed DbContext leaks, and others.
 
-See the dedicated page on [EF's event counters](xref:core/logging-events-diagnostics/event-counters) for more information.
+See the dedicated page on [EF's metrics](xref:core/logging-events-diagnostics/metrics) for more information.
 
 ## Benchmarking with EF Core
 
@@ -101,7 +101,7 @@ As a simple benchmark scenario, let's compare the following different methods of
 * Avoid loading the entire Blog entity instances at all, by projecting out the ranking only. The saves us from transferring the other, unneeded columns of the Blog entity type.
 * Calculate the average in the database by making it part of the query. This should be the fastest way, since everything is calculated in the database and only the result is transferred back to the client.
 
-With BenchmarkDotNet, you write the code to be benchmarked as a simple method - just like a unit test - and BenchmarkDotNet automatically runs each method for sufficient number of iterations, reliably measuring how long it takes and how much memory is allocated. Here are the different method ([the full benchmark code can be seen here](https://github.com/dotnet/EntityFramework.Docs/tree/main/samples/core/Benchmarks/AverageBlogRanking.cs)):
+With BenchmarkDotNet, you write the code to be benchmarked as a simple method - just like a unit test - and BenchmarkDotNet automatically runs each method for a sufficient number of iterations, reliably measuring how long it takes and how much memory is allocated. Here are the different methods ([the full benchmark code can be seen here](https://github.com/dotnet/EntityFramework.Docs/tree/main/samples/core/Benchmarks/AverageBlogRanking.cs)):
 
 ### [Load entities](#tab/load-entities)
 

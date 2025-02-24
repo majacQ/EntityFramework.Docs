@@ -1,7 +1,7 @@
 ---
 title: Async query and save - EF6
 description: Async query and save in Entity Framework 6
-author: ajcvickers
+author: SamMonoRT
 ms.date: 10/23/2016
 uid: ef6/fundamentals/async
 ---
@@ -25,7 +25,6 @@ Here are some more resources to learn about async:
 
 -   [Brandon Bray’s overview of async/await in .NET 4.5](https://devblogs.microsoft.com/dotnet/async-in-4-5-worth-the-await/)
 -   [Asynchronous Programming](https://msdn.microsoft.com/library/hh191443.aspx) pages in the MSDN Library
--   [How to Build ASP.NET Web Applications Using Async](https://channel9.msdn.com/events/teched/northamerica/2013/dev-b337) (includes a demo of increased server throughput)
 
 ## Create the model
 

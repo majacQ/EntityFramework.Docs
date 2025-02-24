@@ -1,7 +1,7 @@
 ---
 title: Testing with a mocking framework - EF6
 description: Testing with a mocking framework in Entity Framework 6
-author: ajcvickers
+author: SamMonoRT
 ms.date: 10/23/2016
 uid: ef6/fundamentals/testing/mocking
 ---
@@ -207,7 +207,7 @@ namespace TestingDemo
             mockSet.As<IQueryable<Blog>>().Setup(m => m.Provider).Returns(data.Provider);
             mockSet.As<IQueryable<Blog>>().Setup(m => m.Expression).Returns(data.Expression);
             mockSet.As<IQueryable<Blog>>().Setup(m => m.ElementType).Returns(data.ElementType);
-            mockSet.As<IQueryable<Blog>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
+            mockSet.As<IQueryable<Blog>>().Setup(m => m.GetEnumerator()).Returns(() => data.GetEnumerator());
 
             var mockContext = new Mock<BloggingContext>();
             mockContext.Setup(c => c.Blogs).Returns(mockSet.Object);
@@ -382,7 +382,7 @@ namespace TestingDemo
 
             mockSet.As<IQueryable<Blog>>().Setup(m => m.Expression).Returns(data.Expression);
             mockSet.As<IQueryable<Blog>>().Setup(m => m.ElementType).Returns(data.ElementType);
-            mockSet.As<IQueryable<Blog>>().Setup(m => m.GetEnumerator()).Returns(data.GetEnumerator());
+            mockSet.As<IQueryable<Blog>>().Setup(m => m.GetEnumerator()).Returns(() => data.GetEnumerator());
 
             var mockContext = new Mock<BloggingContext>();
             mockContext.Setup(c => c.Blogs).Returns(mockSet.Object);

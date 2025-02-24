@@ -1,7 +1,7 @@
 ---
 title: Entity Framework Blogs - EF6
 description: Entity Framework 6 Blogs
-author: ajcvickers
+author: SamMonoRT
 ms.date: 10/23/2016
 ---
 # Entity Framework Blogs
@@ -26,4 +26,3 @@ Besides the product documentation, these blogs can be a source of useful informa
 ## EF Community Bloggers
 
 - [Julie Lerman](https://thedatafarm.com/blog/)  
-- [Shawn Wildermuth](https://wildermuth.com/Tag/%20Entity%20Framework)  

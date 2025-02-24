@@ -1,12 +1,15 @@
 ---
 title: Log of provider-impacting changes - EF Core
 description: A log of changes in Entity Framework Core which impact providers
-author: ajcvickers
+author: SamMonoRT
 ms.date: 08/08/2018
 uid: core/providers/provider-log
 ---
 
 # Provider-impacting changes
+
+> [!IMPORTANT]
+> This page is no longer being updated. Changes that provider authors need to be aware of are marked with [`providers-beware`](https://github.com/dotnet/efcore/labels/providers-beware).
 
 This page contains links to pull requests made on the EF Core repo that may require authors of other database providers to react. The intention is to provide a starting point for authors of existing third-party database providers when updating their provider to a new version.
 

@@ -1,11 +1,15 @@
 ---
 title: SSDL Specification - EF6
 description: SSDL Specification in Entity Framework 6
-author: ajcvickers
-ms.date: 10/23/2016
+author: SamMonoRT
+ms.date: 08/23/2024
 uid: ef6/modeling/designer/advanced/edmx/ssdl-spec
 ---
 # SSDL Specification
+
+> [!NOTE]
+> SSDL v1 is unsupported, please update to V3
+
 Store schema definition language (SSDL) is an XML-based language that describes the storage model of an Entity Framework application.
 
 In an Entity Framework application, storage model metadata is loaded from a .ssdl file (written in SSDL) into an instance of the System.Data.Metadata.Edm.StoreItemCollection and is accessible by using methods in the System.Data.Metadata.Edm.MetadataWorkspace class. Entity Framework uses storage model metadata to translate queries against the conceptual model to store-specific commands.
@@ -16,9 +20,9 @@ Versions of SSDL are differentiated by XML namespaces.
 
 | SSDL Version | XML Namespace                                     |
 |:-------------|:--------------------------------------------------|
-| SSDL v1      | https://schemas.microsoft.com/ado/2006/04/edm/ssdl |
-| SSDL v2      | https://schemas.microsoft.com/ado/2009/02/edm/ssdl |
-| SSDL v3      | https://schemas.microsoft.com/ado/2009/11/edm/ssdl |
+| SSDL v1      | `https://schemas.microsoft.com/ado/2006/04/edm/ssdl` |
+| SSDL v2      | `https://schemas.microsoft.com/ado/2009/02/edm/ssdl` |
+| SSDL v3      | `https://schemas.microsoft.com/ado/2009/11/edm/ssdl` |
 
 ## Association Element (SSDL)
 
@@ -897,7 +901,7 @@ The **Schema** element may contain zero or more of the following child elements:
 
 The **Schema** element uses the **Namespace** attribute to define the namespace for the entity type and association objects in a storage model. Within a namespace, no two objects can have the same name.
 
-A storage model namespace is different from the XML namespace of the **Schema** element. A storage model namespace (as defined by the **Namespace** attribute) is a logical container for entity types and association types. The XML namespace (indicated by the **xmlns** attribute) of a **Schema** element is the default namespace for child elements and attributes of the **Schema** element. XML namespaces of the form https://schemas.microsoft.com/ado/YYYY/MM/edm/ssdl (where YYYY and MM represent a year and month respectively) are reserved for SSDL. Custom elements and attributes cannot be in namespaces that have this form.
+A storage model namespace is different from the XML namespace of the **Schema** element. A storage model namespace (as defined by the **Namespace** attribute) is a logical container for entity types and association types. The XML namespace (indicated by the **xmlns** attribute) of a **Schema** element is the default namespace for child elements and attributes of the **Schema** element. XML namespaces of the form `https://schemas.microsoft.com/ado/YYYY/MM/edm/ssdl` (where YYYY and MM represent a year and month respectively) are reserved for SSDL. Custom elements and attributes cannot be in namespaces that have this form.
 
 ### Applicable Attributes
 

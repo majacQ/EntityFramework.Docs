@@ -1,7 +1,7 @@
 ---
 title: EF Core release planning
 description: Information on how Entity Framework Core planning and releasing is done
-author: ajcvickers
+author: SamMonoRT
 ms.date: 01/28/2020
 uid: core/what-is-new/release-planning
 ---
@@ -45,18 +45,6 @@ We are less likely to patch an issue if:
 This bar gradually rises through the lifetime of a [long-term support (LTS)](https://dotnet.microsoft.com/platform/support/policy/dotnet-core) release. This is because LTS releases emphasize stability.
 
 The final decision about whether or not to patch an issue is made by the .NET Directors at Microsoft.
-
-### Minor releases
-
-Minor releases change only the "minor" part of the version.
-For example, EF Core 3.**1**.0 is a release that improves on EF Core 3.**0**.0.
-
-Minor releases:
-
-* Are intended to improve the quality and features of the previous release
-* Typically contain bug fixes and new features
-* Do not include intentional breaking changes
-* Have a few prerelease previews pushed to NuGet
 
 ### Major releases
 

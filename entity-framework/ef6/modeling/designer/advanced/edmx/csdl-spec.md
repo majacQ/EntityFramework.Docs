@@ -1,11 +1,15 @@
 ---
 title: CSDL Specification - EF6
 description: CSDL Specification in Entity Framework 6
-author: ajcvickers
-ms.date: 10/23/2016
+author: SamMonoRT
+ms.date: 08/23/2024
 uid: ef6/modeling/designer/advanced/edmx/csdl-spec
 ---
 # CSDL Specification
+
+> [!NOTE]
+> CSDL v1 is unsupported, please update to V3
+
 Conceptual schema definition language (CSDL) is an XML-based language that describes the entities, relationships, and functions that make up a conceptual model of a data-driven application. This conceptual model can be used by the Entity Framework or WCF Data Services. The metadata that is described with CSDL is used by the Entity Framework to map entities and relationships that are defined in a conceptual model to a data source. For more information, see [SSDL Specification](xref:ef6/modeling/designer/advanced/edmx/ssdl-spec) and [MSL Specification](xref:ef6/modeling/designer/advanced/edmx/msl-spec).
 
 CSDL is the Entity Framework's implementation of the Entity Data Model.
@@ -18,11 +22,10 @@ Versions of CSDL are differentiated by XML namespaces.
 
 | CSDL Version | XML Namespace                                |
 |:-------------|:---------------------------------------------|
-| CSDL v1      | https://schemas.microsoft.com/ado/2006/04/edm |
-| CSDL v2      | https://schemas.microsoft.com/ado/2008/09/edm |
-| CSDL v3      | https://schemas.microsoft.com/ado/2009/11/edm |
+| CSDL v1      | `https://schemas.microsoft.com/ado/2006/04/edm` |
+| CSDL v2      | `https://schemas.microsoft.com/ado/2008/09/edm` |
+| CSDL v3      | `https://schemas.microsoft.com/ado/2009/11/edm` |
 
- 
 ## Association Element (CSDL)
 
 An **Association** element defines a relationship between two entity types. An association must specify the entity types that are involved in the relationship and the possible number of entity types at each end of the relationship, which is known as the multiplicity. The multiplicity of an association end can have a value of one (1), zero or one (0..1), or many (\*). This information is specified in two child End elements.
@@ -1660,7 +1663,7 @@ A **Schema** element may contain zero or one Annotation elements.
 
 The **Schema** element uses the **Namespace** attribute to define the namespace for the entity type, complex type, and association objects in a conceptual model. Within a namespace, no two objects can have the same name. Namespaces can span multiple **Schema** elements and multiple .csdl files.
 
-A conceptual model namespace is different from the XML namespace of the **Schema** element. A conceptual model namespace (as defined by the **Namespace** attribute) is a logical container for entity types, complex types, and association types. The XML namespace (indicated by the **xmlns** attribute) of a **Schema** element is the default namespace for child elements and attributes of the **Schema** element. XML namespaces of the form https://schemas.microsoft.com/ado/YYYY/MM/edm (where YYYY and MM represent a year and month respectively) are reserved for CSDL. Custom elements and attributes cannot be in namespaces that have this form.
+A conceptual model namespace is different from the XML namespace of the **Schema** element. A conceptual model namespace (as defined by the **Namespace** attribute) is a logical container for entity types, complex types, and association types. The XML namespace (indicated by the **xmlns** attribute) of a **Schema** element is the default namespace for child elements and attributes of the **Schema** element. XML namespaces of the form `https://schemas.microsoft.com/ado/YYYY/MM/edm` (where YYYY and MM represent a year and month respectively) are reserved for CSDL. Custom elements and attributes cannot be in namespaces that have this form.
 
 ### Applicable Attributes
 
@@ -2064,7 +2067,7 @@ The following table describes the facets that are supported in CSDL. All facets 
 | **Unicode**         | Indicates whether the property value is stored as Unicode.                                                                                                                                                                                                    | **Edm.String**                                                                                                                                                                                                                                                                                                                                                                       | Yes                              | Yes                 |
 
 >[!NOTE]
-> When generating a database from a conceptual model, the Generate Database Wizard will recognize the value of the **StoreGeneratedPattern** attribute on a **Property** element if it is in the following namespace: https://schemas.microsoft.com/ado/2009/02/edm/annotation. The supported values for the attribute are **Identity** and **Computed**. A value of **Identity** will produce a database column with an identity value that is generated in the database. A value of **Computed** will produce a column with a value that is computed in the database.
+> When generating a database from a conceptual model, the Generate Database Wizard will recognize the value of the **StoreGeneratedPattern** attribute on a **Property** element if it is in the following namespace: `https://schemas.microsoft.com/ado/2009/02/edm/annotation`. The supported values for the attribute are **Identity** and **Computed**. A value of **Identity** will produce a database column with an identity value that is generated in the database. A value of **Computed** will produce a column with a value that is computed in the database.
 
 ### Example
 

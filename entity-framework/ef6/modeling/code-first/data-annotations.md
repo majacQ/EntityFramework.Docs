@@ -1,7 +1,7 @@
 ---
 title: Code First Data Annotations - EF6
 description: Code First Data Annotations in Entity Framework 6
-author: ajcvickers
+author: SamMonoRT
 ms.date: 10/23/2016
 uid: ef6/modeling/code-first/data-annotations
 ---
@@ -42,7 +42,7 @@ I’ll demonstrate Code First DataAnnotations with a simple pair of classes: Blo
     }
 ```
 
-As they are, the Blog and Post classes conveniently follow code first convention and require no tweaks to enable EF compatability. However, you can also use the annotations to provide more information to EF about the classes and the database to which they map.
+As they are, the Blog and Post classes conveniently follow code first convention and require no tweaks to enable EF compatibility. However, you can also use the annotations to provide more information to EF about the classes and the database to which they map.
 
  
 

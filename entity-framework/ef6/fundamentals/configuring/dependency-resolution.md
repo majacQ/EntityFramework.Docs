@@ -1,7 +1,7 @@
 ---
 title: Dependency resolution - EF6
 description: Dependency resolution in Entity Framework 6
-author: ajcvickers
+author: SamMonoRT
 ms.date: 10/23/2016
 uid: ef6/fundamentals/configuring/dependency-resolution
 ---
@@ -58,7 +58,7 @@ This article does not contain full details on how to implement IDbDependencyReso
 
 **Version introduced**: EF6.0.0  
 
-**Object returned**: The connection factory that will be used when EF creates a database connection by convention. That is, when no connection or connection string is given to EF, and no connection string can be found in the app.config or web.config, then this service is used to create a connection by convention. Changing the connection factory can allow EF to use a different type of database (for example, SQL Server Compact Edition) by default.  
+**Object returned**: The connection factory that will be used when EF creates a database connection by convention. That is, when no connection or connection string is given to EF, and no connection string can be found in the `app.config` or `web.config`, then this service is used to create a connection by convention. Changing the connection factory can allow EF to use a different type of database (for example, SQL Server Compact Edition) by default. Never store passwords or other sensitive data in configuration provider code or in plain text configuration files. Specify secrets outside of the project so that they can't be accidentally committed to a source code repository. Consider protecting the contents of the configuration file using [Protected Configuration](/dotnet/framework/data/adonet/connection-strings-and-configuration-files#encrypt-configuration-file-sections-using-protected-configuration).
 
 **Key**: Not used; will be null  
 
@@ -97,7 +97,7 @@ This article does not contain full details on how to implement IDbDependencyReso
 
 **Object returned**: An EF spatial provider that adds support to the basic EF provider for geography and geometry spatial types.  
 
-**Key**: DbSptialServices is asked for in two ways. First, provider-specific spatial services are requested using a DbProviderInfo object (which contains invariant name and manifest token) as the key. Second, DbSpatialServices can be asked for with no key. This is used to resolve the "global spatial provider" which is used when creating stand-alone DbGeography or DbGeometry types.  
+**Key**: DbSpatialServices is asked for in two ways. First, provider-specific spatial services are requested using a DbProviderInfo object (which contains invariant name and manifest token) as the key. Second, DbSpatialServices can be asked for with no key. This is used to resolve the "global spatial provider" which is used when creating stand-alone DbGeography or DbGeometry types.  
 
 >[!NOTE]
 > For more details on provider-related services in EF6 see the [EF6 provider model](xref:ef6/fundamentals/providers/provider-model) section.  
@@ -190,7 +190,7 @@ This article does not contain full details on how to implement IDbDependencyReso
 
 **Version introduced**: EF6.1.0  
 
-**Object returned**: A factory that will be used to create serializers for serialization of strongly-typed custom annotations such that they can be serialized and desterilized into XML for use in Code First Migrations.  
+**Object returned**: A factory that will be used to create serializers for serialization of strongly-typed custom annotations such that they can be serialized and deserialized into XML for use in Code First Migrations.  
 
 **Key**: The name of the annotation that is being serialized or deserialized.  
 

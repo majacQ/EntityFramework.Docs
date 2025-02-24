@@ -116,12 +116,30 @@ ORDER BY [p].[AuthorId]
 
 The aggregate operators EF Core supports are as follows
 
-- Average
-- Count
-- LongCount
-- Max
-- Min
-- Sum
+| .NET                     | SQL           |
+|--------------------------|---------------|
+| Average(x => x.Property) | AVG(Property) |
+| Count()                  | COUNT(*)      |
+| LongCount()              | COUNT(*)      |
+| Max(x => x.Property)     | MAX(Property) |
+| Min(x => x.Property)     | MIN(Property) |
+| Sum(x => x.Property)     | SUM(Property) |
+
+Additional aggregate operators may be supported. Check your provider docs for more function mappings.
+
+Even though there is no database structure to represent an `IGrouping`, in some cases, EF Core 7.0 and newer can create the groupings after the results are returned from the database. This is similar to how the [`Include`](xref:core/querying/related-data/eager) operator works when including related collections. The following LINQ query uses the GroupBy operator to group the results by the value of their Price property.
+
+```csharp
+var query = context.Books.GroupBy(s => s.Price);
+```
+
+```sql
+SELECT [b].[Price], [b].[Id], [b].[AuthorId]
+FROM [Books] AS [b]
+ORDER BY [b].[Price]
+```
+
+In this case, the GroupBy operator doesn't translate directly to a `GROUP BY` clause in the SQL, but instead, EF Core creates the groupings after the results are returned from the server.
 
 ## Left Join
 

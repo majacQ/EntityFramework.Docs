@@ -1,7 +1,7 @@
 ---
 title: Plan for Entity Framework Core 5.0
 description: The features planned for Entity Framework Core 5.0
-author: ajcvickers
+author: SamMonoRT
 ms.date: 08/22/2020
 uid: core/what-is-new/ef-core-5.0/plan
 ---
@@ -192,6 +192,9 @@ Status: Scope/Done
 
 Scoping: Platform guidance and samples are published for Blazor, Xamarin, WinForms, and WPF. Xamarin and other AOT/linker work is now planned for EF Core 6.0.
 
+> [!IMPORTANT]
+> Xamarin.Android, Xamarin.iOS, Xamarin.Mac are now integrated directly into .NET (starting with .NET 6) as .NET for Android, .NET for iOS, and .NET for macOS. If you're building with these project types today, they should be upgraded to .NET SDK-style projects for continued support. For more information about upgrading Xamarin projects to .NET, see the [Upgrade from Xamarin to .NET & .NET MAUI](/dotnet/maui/migration) documentation.
+
 We have good guidance for using EF Core in traditional MVC-like web applications. Guidance for other platforms and application models is either missing or out-of-date. For EF Core 5.0, we plan to investigate, improve, and document the experience of using EF Core with:
 
 * Blazor
@@ -251,7 +254,7 @@ Tracked by [#1675](https://github.com/dotnet/EntityFramework.Docs/issues/1675)
 
 T-shirt size: M
 
-Status: Completed. The new documentation is [live on the Microsoft docs site](/dotnet/standard/data/sqlite/?tabs=netcore-cli).
+Status: Completed. The new documentation is [live on Microsoft Learn](/dotnet/standard/data/sqlite/?tabs=netcore-cli).
 
 The EF Team also owns the Microsoft.Data.Sqlite ADO.NET provider. We plan to fully document this provider as part of the 5.0 release.
 
@@ -259,7 +262,7 @@ The EF Team also owns the Microsoft.Data.Sqlite ADO.NET provider. We plan to ful
 
 Lead documenter: @ajcvickers
 
-Tracked by [issues in the docs repo in the 5.0 milestone](https://github.com/dotnet/EntityFramework.Docs/issues?utf8=%E2%9C%93&q=is%3Aissue+milestone%3A5.0.0+)
+Tracked by [issues in the documentation repo in the 5.0 milestone](https://github.com/dotnet/EntityFramework.Docs/issues?utf8=%E2%9C%93&q=is%3Aissue+milestone%3A5.0.0+)
 
 T-shirt size: L
 
@@ -267,9 +270,9 @@ Status: In-progress
 
 We are already in the process of updating documentation for the 3.0 and 3.1 releases. We are also working on:
 
-* An overhaul of the getting started docs to make them more approachable/easier to follow
-* Reorganization of docs to make things easier to find and to add cross-references
-* Adding more details and clarifications to existing docs
+* An overhaul of the getting started articles to make them more approachable/easier to follow
+* Reorganization of articles to make things easier to find and to add cross-references
+* Adding more details and clarifications to existing articles
 * Updating the samples and adding more examples
 
 ## Fixing bugs

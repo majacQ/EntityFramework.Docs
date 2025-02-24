@@ -1,18 +1,21 @@
 ---
 title: Azure Cosmos DB Provider - EF Core
-description: Documentation for the database provider that allows Entity Framework Core to be used with the Azure Cosmos DB SQL API
+description: Documentation for the database provider that allows Entity Framework Core to be used with Azure Cosmos DB.
 author: AndriySvyryd
-ms.date: 11/15/2021
+ms.date: 02/12/2023
 uid: core/providers/cosmos/index
 ---
 # EF Core Azure Cosmos DB Provider
+
+> [!WARNING]
+> Extensive work has gone into the Azure Cosmos DB provider in 9.0. In order to improve the provider, a number of high-impact breaking changes had to be made; if you are upgrading an existing application, please read the [breaking changes section](xref:core/what-is-new/ef-core-9.0/breaking-changes#cosmos-breaking-changes) carefully.
 
 This database provider allows Entity Framework Core to be used with Azure Cosmos DB. The provider is maintained as part of the [Entity Framework Core Project](https://github.com/dotnet/efcore).
 
 It is strongly recommended to familiarize yourself with the [Azure Cosmos DB documentation](/azure/cosmos-db/introduction) before reading this section.
 
 > [!NOTE]
-> This provider only works with the SQL API of Azure Cosmos DB.
+> This provider only works with Azure Cosmos DB for NoSQL.
 
 ## Install
 
@@ -42,7 +45,7 @@ As for other providers the first step is to call [UseCosmos](/dotnet/api/Microso
 [!code-csharp[Configuration](../../../../samples/core/Cosmos/ModelBuilding/OrderContext.cs?name=Configuration)]
 
 > [!WARNING]
-> The endpoint and key are hardcoded here for simplicity, but in a production app these should be [stored securely](/aspnet/core/security/app-secrets#secret-manager).
+> The endpoint and key are hardcoded here for simplicity, but in a production app these should be [stored securely](/aspnet/core/security/app-secrets#secret-manager). See [Connecting and authenticating](xref:core/providers/cosmos/index#connecting-and-authenticating) for different ways to connect to Azure Cosmos DB.
 
 In this example `Order` is a simple entity with a reference to the [owned type](xref:core/modeling/owned-entities) `StreetAddress`.
 
@@ -56,157 +59,27 @@ Saving and querying data follows the normal EF pattern:
 
 > [!IMPORTANT]
 > Calling [EnsureCreatedAsync](/dotnet/api/Microsoft.EntityFrameworkCore.Storage.IDatabaseCreator.EnsureCreatedAsync) is necessary to create the required containers and insert the [seed data](xref:core/modeling/data-seeding) if present in the model. However `EnsureCreatedAsync` should only be called during deployment, not normal operation, as it may cause performance issues.
+>
+> Azure Cosmos DB SDK does not support RBAC for management plane operations in Azure Cosmos DB. Use Azure Management API instead of EnsureCreatedAsync with RBAC.
 
-## Cosmos options
+## Connecting and authenticating
 
-It is also possible to configure the Cosmos DB provider with a single connection string and to specify other options to customize the connection:
+The Azure Cosmos DB provider for EF Core has multiple overloads of the [UseCosmos](/dotnet/api/Microsoft.EntityFrameworkCore.CosmosDbContextOptionsExtensions.UseCosmos) method. These overloads support the different ways that a connection can be made to the database, and the different ways of ensuring that the connection is secure.
+
+> [!IMPORTANT]
+> Make sure to understand [_Secure access to data in Azure Cosmos DB_](/azure/cosmos-db/secure-access-to-data) to understand the security implications and best practices for using each overload of the `UseCosmos` method.
+> Generally, RBAC with token credentials is the recommended access-control mechanism.
+
+| Connection Mechanism       | UseCosmos Overload                                                     | More information                                                                          |
+|----------------------------|------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| Account endpoint and key   | `UseCosmos<DbContext>(accountEndpoint, accountKey, databaseName)`      | [Primary/secondary keys](/azure/cosmos-db/secure-access-to-data#primary-keys)                |
+| Account endpoint and token | `UseCosmos<DbContext>(accountEndpoint, tokenCredential, databaseName)` | [RBAC and Resource tokens](/azure/cosmos-db/secure-access-to-data#role-based-access-control) |
+| Connection string          | `UseCosmos<DbContext>(connectionString, databaseName)`                 | [Work with account keys and connection strings](/azure/cosmos-db/scripts/cli/common/keys)    |
+
+## Azure Cosmos DB options
+
+It is also possible to configure the Azure Cosmos DB provider with a single connection string and to specify other options to customize the connection:
 
 [!code-csharp[Configuration](../../../../samples/core/Cosmos/ModelBuilding/OptionsContext.cs?name=Configuration)]
 
-> [!NOTE]
-> Most of these options were introduced in EF Core 5.0.
-
-> [!TIP]
-> See the [Azure Cosmos DB Options documentation](/dotnet/api/microsoft.azure.cosmos.cosmosclientoptions) for a detailed description of the effect of each option mentioned above.
-
-## Cosmos-specific model customization
-
-By default all entity types are mapped to the same container, named after the derived context (`"OrderContext"` in this case). To change the default container name use [HasDefaultContainer](/dotnet/api/Microsoft.EntityFrameworkCore.CosmosModelBuilderExtensions.HasDefaultContainer):
-
-[!code-csharp[DefaultContainer](../../../../samples/core/Cosmos/ModelBuilding/OrderContext.cs?name=DefaultContainer)]
-
-To map an entity type to a different container use [ToContainer](/dotnet/api/Microsoft.EntityFrameworkCore.CosmosEntityTypeBuilderExtensions.ToContainer):
-
-[!code-csharp[Container](../../../../samples/core/Cosmos/ModelBuilding/OrderContext.cs?name=Container)]
-
-To identify the entity type that a given item represent EF Core adds a discriminator value even if there are no derived entity types. The name and value of the discriminator [can be changed](xref:core/modeling/inheritance).
-
-If no other entity type will ever be stored in the same container the discriminator can be removed by calling [HasNoDiscriminator](/dotnet/api/Microsoft.EntityFrameworkCore.Metadata.Builders.EntityTypeBuilder.HasNoDiscriminator):
-
-[!code-csharp[NoDiscriminator](../../../../samples/core/Cosmos/ModelBuilding/OrderContext.cs?name=NoDiscriminator)]
-
-### Partition keys
-
-By default EF Core will create containers with the partition key set to `"__partitionKey"` without supplying any value for it when inserting items. But to fully leverage the performance capabilities of Azure Cosmos a [carefully selected partition key](/azure/cosmos-db/partition-data) should be used. It can be configured by calling [HasPartitionKey](/dotnet/api/Microsoft.EntityFrameworkCore.CosmosEntityTypeBuilderExtensions.HasPartitionKey):
-
-[!code-csharp[PartitionKey](../../../../samples/core/Cosmos/ModelBuilding/OrderContext.cs?name=PartitionKey)]
-
-> [!NOTE]
->The partition key property can be of any type as long as it is [converted to string](xref:core/modeling/value-conversions).
-
-Once configured the partition key property should always have a non-null value. A query can be made single-partition by adding a <xref:Microsoft.EntityFrameworkCore.CosmosQueryableExtensions.WithPartitionKey%2A> call.
-
-[!code-csharp[PartitionKey](../../../../samples/core/Cosmos/ModelBuilding/Sample.cs?name=PartitionKey&highlight=14)]
-
-> [!NOTE]
-> <xref:Microsoft.EntityFrameworkCore.CosmosQueryableExtensions.WithPartitionKey%2A> was introduced in EF Core 5.0.
-
-It is generally recommended to add the partition key to the primary key as that best reflects the server semantics and allows some optimizations, for example in `FindAsync`.
-
-## Embedded entities
-
-For Cosmos, owned entities are embedded in the same item as the owner. To change a property name use [ToJsonProperty](/dotnet/api/Microsoft.EntityFrameworkCore.CosmosEntityTypeBuilderExtensions.ToJsonProperty):
-
-[!code-csharp[PropertyNames](../../../../samples/core/Cosmos/ModelBuilding/OrderContext.cs?name=PropertyNames)]
-
-With this configuration the order from the example above is stored like this:
-
-```json
-{
-    "Id": 1,
-    "PartitionKey": "1",
-    "TrackingNumber": null,
-    "id": "1",
-    "Address": {
-        "ShipsToCity": "London",
-        "ShipsToStreet": "221 B Baker St"
-    },
-    "_rid": "6QEKAM+BOOABAAAAAAAAAA==",
-    "_self": "dbs/6QEKAA==/colls/6QEKAM+BOOA=/docs/6QEKAM+BOOABAAAAAAAAAA==/",
-    "_etag": "\"00000000-0000-0000-683c-692e763901d5\"",
-    "_attachments": "attachments/",
-    "_ts": 1568163674
-}
-```
-
-Collections of owned entities are embedded as well. For the next example we'll use the `Distributor` class with a collection of `StreetAddress`:
-
-[!code-csharp[Distributor](../../../../samples/core/Cosmos/ModelBuilding/Distributor.cs?name=Distributor)]
-
-The owned entities don't need to provide explicit key values to be stored:
-
-[!code-csharp[OwnedCollection](../../../../samples/core/Cosmos/ModelBuilding/Sample.cs?name=OwnedCollection)]
-
-They will be persisted in this way:
-
-```json
-{
-    "Id": 1,
-    "Discriminator": "Distributor",
-    "id": "Distributor|1",
-    "ShippingCenters": [
-        {
-            "City": "Phoenix",
-            "Street": "500 S 48th Street"
-        },
-        {
-            "City": "Anaheim",
-            "Street": "5650 Dolly Ave"
-        }
-    ],
-    "_rid": "6QEKANzISj0BAAAAAAAAAA==",
-    "_self": "dbs/6QEKAA==/colls/6QEKANzISj0=/docs/6QEKANzISj0BAAAAAAAAAA==/",
-    "_etag": "\"00000000-0000-0000-683c-7b2b439701d5\"",
-    "_attachments": "attachments/",
-    "_ts": 1568163705
-}
-```
-
-Internally EF Core always needs to have unique key values for all tracked entities. The primary key created by default for collections of owned types consists of the foreign key properties pointing to the owner and an `int` property corresponding to the index in the JSON array. To retrieve these values entry API could be used:
-
-[!code-csharp[ImpliedProperties](../../../../samples/core/Cosmos/ModelBuilding/Sample.cs?name=ImpliedProperties)]
-
-> [!TIP]
-> When necessary the default primary key for the owned entity types can be changed, but then key values should be provided explicitly.
-
-## Working with disconnected entities
-
-Every item needs to have an `id` value that is unique for the given partition key. By default EF Core generates the value by concatenating the discriminator and the primary key values, using '|' as a delimiter. The key values are only generated when an entity enters the `Added` state. This might pose a problem when [attaching entities](xref:core/saving/disconnected-entities) if they don't have an `id` property on the .NET type to store the value.
-
-To work around this limitation one could create and set the `id` value manually or mark the entity as added first, then changing it to the desired state:
-
-[!code-csharp[Attach](../../../../samples/core/Cosmos/ModelBuilding/Sample.cs?highlight=4&name=Attach)]
-
-This is the resulting JSON:
-
-```json
-{
-    "Id": 1,
-    "Discriminator": "Distributor",
-    "id": "Distributor|1",
-    "ShippingCenters": [
-        {
-            "City": "Phoenix",
-            "Street": "500 S 48th Street"
-        }
-    ],
-    "_rid": "JBwtAN8oNYEBAAAAAAAAAA==",
-    "_self": "dbs/JBwtAA==/colls/JBwtAN8oNYE=/docs/JBwtAN8oNYEBAAAAAAAAAA==/",
-    "_etag": "\"00000000-0000-0000-9377-d7a1ae7c01d5\"",
-    "_attachments": "attachments/",
-    "_ts": 1572917100
-}
-```
-
-## Optimistic concurrency with eTags
-
-> [!NOTE]
-> Support for eTag concurrency was introduced in EF Core 5.0.
-
-To configure an entity type to use [optimistic concurrency](xref:core/modeling/concurrency) call <xref:Microsoft.EntityFrameworkCore.CosmosEntityTypeBuilderExtensions.UseETagConcurrency%2A>. This call will create an `_etag` property in [shadow state](xref:core/modeling/shadow-properties) and set it as the concurrency token.
-
-[!code-csharp[Main](../../../../samples/core/Cosmos/ModelBuilding/OrderContext.cs?name=ETag)]
-
-To make it easier to resolve concurrency errors you can map the eTag to a CLR property using <xref:Microsoft.EntityFrameworkCore.CosmosPropertyBuilderExtensions.IsETagConcurrency%2A>.
-
-[!code-csharp[Main](../../../../samples/core/Cosmos/ModelBuilding/OrderContext.cs?name=ETagProperty)]
+The code above shows some possible options - these are not intended to be used at the same time. See the [Azure Cosmos DB Options documentation](/dotnet/api/microsoft.azure.cosmos.cosmosclientoptions) for a detailed description of the effect of each option mentioned above.
