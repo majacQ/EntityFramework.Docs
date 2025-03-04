@@ -1,7 +1,7 @@
 ---
 title: Using a Separate Migrations Project - EF Core
 description: Using a separate migration project for managing database schemas with Entity Framework Core
-author: bricelam
+author: SamMonoRT
 ms.date: 11/06/2020
 uid: core/managing-schemas/migrations/projects
 ---
@@ -32,7 +32,7 @@ You may want to store your migrations in a different project than the one contai
 
    ```xml
    <ItemGroup>
-     <ProjectReference Include="..\WebApplication1.Migrations\WebApplication1.Migrations.csproj">
+     <ProjectReference Include="..\WebApplication1.Migrations\WebApplication1.Migrations.csproj" />
    </ItemGroup>
    ```
 

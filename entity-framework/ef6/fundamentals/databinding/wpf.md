@@ -1,7 +1,7 @@
 ---
 title: Databinding with WPF - EF6
 description: Databinding with WPF in Entity Framework 6
-author: ajcvickers
+author: SamMonoRT
 ms.date: 05/19/2020
 uid: ef6/fundamentals/databinding/wpf
 ---
@@ -79,9 +79,11 @@ When using Code First development you usually begin by writing .NET Framework cl
             public virtual Category Category { get; set; }
         }
     }
+```
 
 - Add a **Category** class with the following definition:
 
+``` csharp
     using System.Collections.ObjectModel;
 
     namespace WPFwithEFSample

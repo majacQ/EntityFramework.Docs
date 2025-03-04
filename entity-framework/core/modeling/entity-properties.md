@@ -11,7 +11,7 @@ Each entity type in your model has a set of properties, which EF Core will read 
 
 ## Included and excluded properties
 
-By convention, all public properties with a getter and a setter will be included in the model.
+By [convention](xref:core/modeling/index#built-in-conventions), all public properties with a getter and a setter will be included in the model.
 
 Specific properties can be excluded as follows:
 
@@ -45,7 +45,7 @@ If you prefer to configure your columns with different names, you can do so as f
 
 When using a relational database, the database provider selects a data type based on the .NET type of the property. It also takes into account other metadata, such as the configured [maximum length](#maximum-length), whether the property is part of a primary key, etc.
 
-For example, SQL Server maps `DateTime` properties to `datetime2(7)` columns, and `string` properties to `nvarchar(max)` columns (or to `nvarchar(450)` for properties that are used as a key).
+For example, the SQL Server provider maps `DateTime` properties to `datetime2(7)` columns, and `string` properties to `nvarchar(max)` columns (or to `nvarchar(450)` for properties that are used as a key).
 
 You can also configure your columns to specify an exact data type for a column. For example, the following code configures `Url` as a non-unicode string with maximum length of `200` and `Rating` as decimal with precision of `5` and scale of `2`:
 
@@ -89,17 +89,11 @@ In the following example, configuring the `Score` property to have precision 14 
 
 #### [Data Annotations](#tab/data-annotations)
 
-> [!NOTE]
-> The Data Annotation for configuring precision and scale was introduced in EF Core 6.0.
-
 [!code-csharp[Main](../../../samples/core/Modeling/EntityProperties/DataAnnotations/PrecisionAndScale.cs?name=PrecisionAndScale&highlight=4,6)]
 
 Scale is never defined without first defining precision, so the Data Annotation for defining the scale is `[Precision(precision, scale)]`.
 
 #### [Fluent API](#tab/fluent-api)
-
-> [!NOTE]
-> The Fluent API for configuring precision and scale was introduced in EF Core 5.0.
 
 [!code-csharp[Main](../../../samples/core/Modeling/EntityProperties/FluentAPI/PrecisionAndScale.cs?name=PrecisionAndScale&highlight=5,9)]
 
@@ -114,9 +108,6 @@ In some relational databases, different types exist to represent Unicode and non
 Text properties are configured as Unicode by default. You can configure a column as non-Unicode as follows:
 
 #### [Data Annotations](#tab/data-annotations)
-
-> [!NOTE]
-> The Data Annotation for configuring Unicode was introduced in EF Core 6.0.
 
 [!code-csharp[Main](../../../samples/core/Modeling/EntityProperties/DataAnnotations/Unicode.cs?name=Unicode&highlight=6-7)]
 
@@ -134,12 +125,12 @@ A property is considered optional if it is valid for it to contain `null`. If `n
 
 By convention, a property whose .NET type can contain null will be configured as optional, whereas properties whose .NET type cannot contain null will be configured as required. For example, all properties with .NET value types (`int`, `decimal`, `bool`, etc.) are configured as required, and all properties with nullable .NET value types (`int?`, `decimal?`, `bool?`, etc.) are configured as optional.
 
-C# 8 introduced a new feature called [nullable reference types (NRT)](/dotnet/csharp/tutorials/nullable-reference-types), which allows reference types to be annotated, indicating whether it is valid for them to contain null or not. This feature is disabled by default, and affects EF Core's behavior in the following way:
+C# 8 introduced a new feature called [nullable reference types (NRT)](/dotnet/csharp/tutorials/nullable-reference-types), which allows reference types to be annotated, indicating whether it is valid for them to contain null or not. This feature is enabled by default in new project templates, but remains disabled in existing projects unless explicitly opted into. Nullable reference types affect EF Core's behavior in the following way:
 
-* If nullable reference types are disabled (the default), all properties with .NET reference types are configured as optional by convention (for example, `string`).
+* If nullable reference types are disabled, all properties with .NET reference types are configured as optional by convention (for example, `string`).
 * If nullable reference types are enabled, properties will be configured based on the C# nullability of their .NET type: `string?` will be configured as optional, but `string` will be configured as required.
 
-The following example shows an entity type with required and optional properties, with the nullable reference feature disabled (the default) and enabled:
+The following example shows an entity type with required and optional properties, with the nullable reference feature disabled and enabled:
 
 #### [Without NRT (default)](#tab/without-nrt)
 
@@ -174,9 +165,6 @@ A property that would be optional by convention can be configured to be required
 
 ## Column collations
 
-> [!NOTE]
-> This feature was introduced in EF Core 5.0.
-
 A collation can be defined on text columns, determining how they are compared and ordered. For example, the following code snippet configures a SQL Server column to be case-insensitive:
 
 [!code-csharp[Main](../../../samples/core/Miscellaneous/Collations/Program.cs?name=ColumnCollation)]
@@ -191,9 +179,6 @@ You can set an arbitrary text comment that gets set on the database column, allo
 
 ### [Data Annotations](#tab/data-annotations)
 
-> [!NOTE]
-> Setting comments via data annotations was introduced in EF Core 5.0.
-
 [!code-csharp[Main](../../../samples/core/Modeling/EntityProperties/DataAnnotations/ColumnComment.cs?name=ColumnComment&highlight=5)]
 
 ### [Fluent API](#tab/fluent-api)
@@ -203,9 +188,6 @@ You can set an arbitrary text comment that gets set on the database column, allo
 ***
 
 ## Column order
-
-> [!NOTE]
-> This feature was introduced in EF Core 6.0.
 
 By default when creating a table with [Migrations](xref:core/managing-schemas/migrations/index), EF Core orders primary key columns first, followed by properties of the entity type and owned types, and finally properties from base types. You can, however, specify a different column order:
 

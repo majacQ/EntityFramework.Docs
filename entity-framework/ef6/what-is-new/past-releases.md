@@ -1,7 +1,7 @@
 ---
 title: Past Releases of Entity Framework - EF6
 description: Past Releases of Entity Framework
-author: ajcvickers
+author: SamMonoRT
 ms.date: 09/12/2019
 uid: ef6/what-is-new/past-releases
 ---
@@ -228,7 +228,7 @@ Here is a list of content we put together specifically for the EF 4.3 release, m
 ## EF 4.2
 The EF 4.2.0 runtime was released to NuGet in November of 2011.
 This release includes bug fixes to the EF 4.1.1 release.
-Because this release only included bug fixes it could have been the EF 4.1.2 patch release but we opted to move to 4.2 to allow us to move away from the date based patch version numbers we used in the 4.1.x releases and adopt the [Semantic Versionsing](https://semver.org) standard for semantic versioning.
+Because this release only included bug fixes it could have been the EF 4.1.2 patch release but we opted to move to 4.2 to allow us to move away from the date based patch version numbers we used in the 4.1.x releases and adopt the [Semantic Versioning](https://semver.org) standard for semantic versioning.
 
 Here is a list of content we put together specifically for the EF 4.2 release, the content provided for EF 4.1 still applies to EF 4.2 as well:
 

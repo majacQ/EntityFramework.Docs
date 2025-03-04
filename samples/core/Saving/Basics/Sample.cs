@@ -1,70 +1,71 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
-namespace EFSaving.Basics
+namespace EFSaving.Basics;
+
+public class Sample
 {
-    public class Sample
+    public static async Task Run()
     {
-        public static void Run()
+        using (var context = new BloggingContext())
         {
-            using (var context = new BloggingContext())
-            {
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
-            }
-
-            #region Add
-            using (var context = new BloggingContext())
-            {
-                var blog = new Blog { Url = "http://example.com" };
-                context.Blogs.Add(blog);
-                context.SaveChanges();
-            }
-            #endregion
-
-            #region Update
-            using (var context = new BloggingContext())
-            {
-                var blog = context.Blogs.First();
-                blog.Url = "http://example.com/blog";
-                context.SaveChanges();
-            }
-            #endregion
-
-            #region Remove
-            using (var context = new BloggingContext())
-            {
-                var blog = context.Blogs.First();
-                context.Blogs.Remove(blog);
-                context.SaveChanges();
-            }
-            #endregion
-
-            #region MultipleOperations
-            using (var context = new BloggingContext())
-            {
-                // seeding database
-                context.Blogs.Add(new Blog { Url = "http://example.com/blog" });
-                context.Blogs.Add(new Blog { Url = "http://example.com/another_blog" });
-                context.SaveChanges();
-            }
-
-            using (var context = new BloggingContext())
-            {
-                // add
-                context.Blogs.Add(new Blog { Url = "http://example.com/blog_one" });
-                context.Blogs.Add(new Blog { Url = "http://example.com/blog_two" });
-
-                // update
-                var firstBlog = context.Blogs.First();
-                firstBlog.Url = "";
-
-                // remove
-                var lastBlog = context.Blogs.OrderBy(e => e.BlogId).Last();
-                context.Blogs.Remove(lastBlog);
-
-                context.SaveChanges();
-            }
-            #endregion
+            await context.Database.EnsureDeletedAsync();
+            await context.Database.EnsureCreatedAsync();
         }
+
+        #region Add
+        using (var context = new BloggingContext())
+        {
+            var blog = new Blog { Url = "http://example.com" };
+            context.Blogs.Add(blog);
+            await context.SaveChangesAsync();
+        }
+        #endregion
+
+        #region Update
+        using (var context = new BloggingContext())
+        {
+            var blog = await context.Blogs.SingleAsync(b => b.Url == "http://example.com");
+            blog.Url = "http://example.com/blog";
+            await context.SaveChangesAsync();
+        }
+        #endregion
+
+        #region Remove
+        using (var context = new BloggingContext())
+        {
+            var blog = await context.Blogs.SingleAsync(b => b.Url == "http://example.com/blog");
+            context.Blogs.Remove(blog);
+            await context.SaveChangesAsync();
+        }
+        #endregion
+
+        #region MultipleOperations
+        using (var context = new BloggingContext())
+        {
+            // seeding database
+            context.Blogs.Add(new Blog { Url = "http://example.com/blog" });
+            context.Blogs.Add(new Blog { Url = "http://example.com/another_blog" });
+            await context.SaveChangesAsync();
+        }
+
+        using (var context = new BloggingContext())
+        {
+            // add
+            context.Blogs.Add(new Blog { Url = "http://example.com/blog_one" });
+            context.Blogs.Add(new Blog { Url = "http://example.com/blog_two" });
+
+            // update
+            var firstBlog = await context.Blogs.FirstAsync();
+            firstBlog.Url = "";
+
+            // remove
+            var lastBlog = await context.Blogs.OrderBy(e => e.BlogId).LastAsync();
+            context.Blogs.Remove(lastBlog);
+
+            await context.SaveChangesAsync();
+        }
+        #endregion
     }
 }

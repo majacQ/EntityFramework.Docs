@@ -1,7 +1,7 @@
 ---
 title: Cascade Delete - EF Core
 description: Configuring cascading behaviors triggered when an entity is deleted or severed from its principal/parent
-author: ajcvickers
+author: SamMonoRT
 ms.date: 08/10/2021
 uid: core/saving/cascade-delete
 ---
@@ -162,7 +162,7 @@ EF Core always applies configured cascading behaviors to tracked entities. This 
 
 ### Cascade delete in the database
 
-Many database systems also offer cascading behaviors that are triggered when an entity is deleted in the database. EF Core configures these behaviors based on the cascade delete behavior in the EF Core model when a database is created using <xref:Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated%2A> or EF Core migrations. For example, using the model above, the following table is created for posts when using SQL Server:
+Many database systems also offer cascading behaviors that are triggered when an entity is deleted in the database. EF Core configures these behaviors based on the cascade delete behavior in the EF Core model when a database is created using <xref:Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated*> or EF Core migrations. For example, using the model above, the following table is created for posts when using SQL Server:
 
 ```sql
 CREATE TABLE [Posts] (
@@ -267,14 +267,14 @@ There are two ways to handle this situation:
 1. Change one or more of the relationships to not cascade delete.
 2. Configure the database without one or more of these cascade deletes, then ensure all dependent entities are loaded so that EF Core can perform the cascading behavior.
 
-Taking the first approach with our example, we could make the blog-owner relationship optional by giving it a nullable foreign key property:
+Taking the first approach with our example, we could make the post-blog relationship optional by giving it a nullable foreign key property:
 
 <!--
             public int? BlogId { get; set; }
 -->
 [!code-csharp[NullableBlogId](../../../samples/core/CascadeDeletes/OptionalDependentsSamples.cs?name=NullableBlogId)]
 
-An optional relationship allows the blog to exist without an owner, which means cascade delete will no longer be configured by default. This means there is no longer a cycle in cascading actions, and the database can be created without error on SQL Server.
+An optional relationship allows the post to exist without a blog, which means cascade delete will no longer be configured by default. This means there is no longer a cycle in cascading actions, and the database can be created without error on SQL Server.
 
 Taking the second approach instead, we can keep the blog-owner relationship required and configured for cascade delete, but make this configuration only apply to tracked entities, not the database:
 
@@ -441,7 +441,7 @@ Databases can also be configured to cascade nulls like this when a principal/par
 > [!TIP]
 > Be sure to read sections above before coming here. The configuration options will likely not make sense if the preceding material is not understood.
 
-Cascade behaviors are configured per relationship using the <xref:Microsoft.EntityFrameworkCore.Metadata.Builders.ReferenceCollectionBuilder.OnDelete%2A> method in <xref:Microsoft.EntityFrameworkCore.DbContext.OnModelCreating%2A>. For example:
+Cascade behaviors are configured per relationship using the <xref:Microsoft.EntityFrameworkCore.Metadata.Builders.ReferenceCollectionBuilder.OnDelete*> method in <xref:Microsoft.EntityFrameworkCore.DbContext.OnModelCreating*>. For example:
 
 <!--
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -461,7 +461,7 @@ See [Relationships](xref:core/modeling/relationships) for more information on co
 
 ### Impact on database schema
 
-The following table shows the result of each `OnDelete` value on the foreign key constraint created by EF Core migrations or <xref:Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated%2A>.
+The following table shows the result of each `OnDelete` value on the foreign key constraint created by EF Core migrations or <xref:Microsoft.EntityFrameworkCore.Infrastructure.DatabaseFacade.EnsureCreated*>.
 
 | DeleteBehavior        | Impact on database schema
 |:----------------------|--------------------------

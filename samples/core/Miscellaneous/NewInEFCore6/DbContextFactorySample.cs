@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,7 +13,7 @@ public static class DbContextFactorySample
 
         var services = new ServiceCollection()
             .AddDbContextFactory<SomeDbContext>(
-                builder => builder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=EFCoreSample"))
+                builder => builder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=EFCoreSample;ConnectRetryCount=0"))
             .BuildServiceProvider();
 
         var factory = services.GetService<IDbContextFactory<SomeDbContext>>();
@@ -32,7 +33,7 @@ public static class DbContextFactorySample
         #region Registration
         var container = services
             .AddDbContextFactory<SomeDbContext>(
-                builder => builder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=EFCoreSample"))
+                builder => builder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=EFCoreSample;ConnectRetryCount=0"))
             .BuildServiceProvider();
         #endregion
 
@@ -67,9 +68,9 @@ public static class DbContextFactorySample
             _context = context;
         }
 
-        public void DoSomething()
+        public async Task DoSomething()
         {
-            var results = _context.Blogs.ToList();
+            var results = await _context.Blogs.ToListAsync();
 
             // Injected context is disposed when the request scope is disposed
         }
@@ -86,14 +87,14 @@ public static class DbContextFactorySample
             _contextFactory = contextFactory;
         }
 
-        public void DoSomething()
+        public async Task DoSomething()
         {
             using var context1 = _contextFactory.CreateDbContext();
             using var context2 = _contextFactory.CreateDbContext();
 
-            var results1 = context1.Blogs.ToList();
-            var results2 = context2.Blogs.ToList();
-            
+            var results1 = await context1.Blogs.ToListAsync();
+            var results2 = await context2.Blogs.ToListAsync();
+
             // Contexts obtained from the factory must be explicitly disposed
         }
     }
@@ -115,7 +116,7 @@ public static class DbContextFactorySample
             : base(options)
         {
         }
-        
+
         public DbSet<Blog> Blogs { get; set; }
     }
     #endregion

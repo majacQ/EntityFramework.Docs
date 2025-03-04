@@ -1,7 +1,7 @@
 ---
 title: What's New in EF Core 5.0
 description: Overview of new features in EF Core 5.0
-author: ajcvickers
+author: SamMonoRT
 ms.date: 09/10/2020
 uid: core/what-is-new/ef-core-5.0/whatsnew
 ---
@@ -36,7 +36,7 @@ public class Tag
 
 EF Core 5.0 recognizes this as a many-to-many relationship by convention, and automatically creates a `PostTag` join table in the database. Data can be queried and updated without explicitly referencing the join table, considerably simplifying code. The join table can still be customized and queried explicitly if needed.
 
-For further information, [see the full documentation on many-to-many](xref:core/modeling/relationships#many-to-many).
+For further information, [see the full documentation on many-to-many](xref:core/modeling/relationships/many-to-many).
 
 ## Split queries
 
@@ -47,9 +47,9 @@ EF Core 5.0 now allows a single LINQ query including related collections to be s
 For example, consider a query that pulls in two levels of related collections using `Include`:
 
 ```csharp
-var artists = context.Artists
+var artists = await context.Artists
     .Include(e => e.Albums)
-    .ToList();
+    .ToListAsync();
 ```
 
 By default, EF Core will generate the following SQL when using the SQLite provider:
@@ -94,7 +94,7 @@ Console.WriteLine(
     .ToQueryString());
 ```
 
-Finally, various EF Core types have been fitted with an enhanced `DebugView` property which provides a detailed view into the internals. For example, <xref:Microsoft.EntityFrameworkCore.ChangeTracking.ChangeTracker.DebugView%2A?displayProperty=nameWithType> can be consulted to see exactly which entities are being tracked in a given moment.
+Finally, various EF Core types have been fitted with an enhanced `DebugView` property which provides a detailed view into the internals. For example, <xref:Microsoft.EntityFrameworkCore.ChangeTracking.ChangeTracker.DebugView*?displayProperty=nameWithType> can be consulted to see exactly which entities are being tracked in a given moment.
 
 For further information, [see the documentation on logging and interception](xref:core/logging-events-diagnostics/index).
 
@@ -103,9 +103,9 @@ For further information, [see the documentation on logging and interception](xre
 The `Include` method now supports filtering of the entities included:
 
 ```csharp
-var blogs = context.Blogs
+var blogs = await context.Blogs
     .Include(e => e.Posts.Where(p => p.Title.Contains("Cheese")))
-    .ToList();
+    .ToListAsync();
 ```
 
 This query will return blogs together with each associated post, but only when the post title contains "Cheese".
@@ -178,7 +178,7 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 }
 ```
 
-Table-valued functions can also be mapped to a .NET method rather than to a DbSet, allowing parameters to be passed; the mapping can be set up with <xref:Microsoft.EntityFrameworkCore.RelationalModelBuilderExtensions.HasDbFunction%2A>.
+Table-valued functions can also be mapped to a .NET method rather than to a DbSet, allowing parameters to be passed; the mapping can be set up with <xref:Microsoft.EntityFrameworkCore.RelationalModelBuilderExtensions.HasDbFunction*>.
 
 Finally, it is now possible to map an entity to a view when querying (or to a function or defining query), but to a table when updating:
 
@@ -309,7 +309,7 @@ EF Core 5.0 exposes [event counters](https://devblogs.microsoft.com/dotnet/intro
     SaveChanges (Total)                                             1
 ```
 
-For further information, [see the full documentation on event counters](xref:core/logging-events-diagnostics/event-counters).
+For further information, [see the full documentation on event counters](xref:core/logging-events-diagnostics/metrics#event-counters-legacy).
 
 ## Other features
 
@@ -318,7 +318,7 @@ For further information, [see the full documentation on event counters](xref:cor
 * Model building APIs have been introduced for easier configuration of [value comparers](xref:core/modeling/value-comparers).
 * Computed columns can now be configured as [*stored* or *virtual*](xref:core/modeling/generated-properties#computed-columns).
 * Precision and scale can now be configured [via the Fluent API](xref:core/modeling/entity-properties#precision-and-scale).
-* New model building APIs have been introduced for [navigation properties](xref:core/modeling/relationships#configuring-navigation-properties).
+* New model building APIs have been introduced for [navigation properties](xref:core/modeling/relationships/navigations).
 * New model building APIs have been introduced for fields, similar to properties.
 * The .NET [PhysicalAddress](/dotnet/api/system.net.networkinformation.physicaladdress) and [IPAddress](/dotnet/api/system.net.ipaddress) types can now be mapped to database string columns.
 * A backing field can now be configured via [the new `[BackingField]` attribute](xref:core/modeling/backing-field).
@@ -334,14 +334,14 @@ For further information, [see the full documentation on event counters](xref:cor
 * Added support for GroupBy with conditional aggregates (e.g. `GroupBy(o => o.OrderDate).Select(g => g.Count(i => i.OrderDate != null))`).
 * Added support for translating the Distinct operator over group elements before aggregate.
 * Translation of [`Reverse`](/dotnet/api/system.linq.queryable.reverse).
-* Improved translation around `DateTime` for SQL Server (e.g. [`DateDiffWeek`](xref:Microsoft.EntityFrameworkCore.SqlServerDbFunctionsExtensions.DateDiffWeek%2A), [`DateFromParts`](xref:Microsoft.EntityFrameworkCore.SqlServerDbFunctionsExtensions.DateFromParts%2A)).
+* Improved translation around `DateTime` for SQL Server (e.g. [`DateDiffWeek`](xref:Microsoft.EntityFrameworkCore.SqlServerDbFunctionsExtensions.DateDiffWeek*), [`DateFromParts`](xref:Microsoft.EntityFrameworkCore.SqlServerDbFunctionsExtensions.DateFromParts*)).
 * Translation of new methods on byte arrays (e.g. [`Contains`](/dotnet/api/system.linq.enumerable.contains), [`Length`](/dotnet/api/system.array.length), [`SequenceEqual`](/dotnet/api/system.linq.enumerable.sequenceequal)).
 * Translation of some additional bitwise operators, such as two's complement.
 * Translation of `FirstOrDefault` over strings.
 * Improved query translation around null semantics, resulting in tighter, more efficient queries.
 * User-mapped functions can now be annotated to control null propagation, again resulting in tighter, more efficient queries.
 * SQL containing CASE blocks is now considerably more concise.
-* The SQL Server [`DATALENGTH`](/sql/t-sql/functions/datalength-transact-sql) function can now be called in queries via the new [`EF.Functions.DataLength`](xref:Microsoft.EntityFrameworkCore.SqlServerDbFunctionsExtensions.DataLength%2A) method.
+* The SQL Server [`DATALENGTH`](/sql/t-sql/functions/datalength-transact-sql) function can now be called in queries via the new [`EF.Functions.DataLength`](xref:Microsoft.EntityFrameworkCore.SqlServerDbFunctionsExtensions.DataLength*) method.
 * `EnableDetailedErrors` adds [additional details to exceptions](xref:core/logging-events-diagnostics/simple-logging#detailed-query-exceptions).
 
 ### Saving
@@ -361,15 +361,15 @@ For further information, [see the full documentation on event counters](xref:cor
 * New command-line parameters have been added for specifying namespaces in [Migrations](xref:core/managing-schemas/migrations/index#namespaces) and [scaffolding](xref:core/managing-schemas/scaffolding#directories-and-namespaces).
 * The [dotnet ef database update](xref:core/cli/dotnet#dotnet-ef-database-update) command now accepts a new `--connection` parameter for specifying the connection string.
 * Scaffolding existing databases now singularizes table names, so tables named `People` and `Addresses` will be scaffolded to entity types called `Person` and `Address`. [Original database names can still be preserved](xref:core/managing-schemas/scaffolding#preserving-names).
-* The new [`--no-onconfiguring`](xref:core/cli/dotnet#dotnet-ef-dbcontext-scaffold) option can instruct EF Core to exclude `OnModelConfiguring` when scaffolding a model.
+* The new [`--no-onconfiguring`](xref:core/cli/dotnet#dotnet-ef-dbcontext-scaffold) option can instruct EF Core to exclude `OnConfiguring` when scaffolding a model.
 
-### Cosmos
+### Azure Cosmos DB
 
-* [Cosmos connection settings](xref:core/providers/cosmos/index#cosmos-options) have been expanded.
-* Optimistic concurrency is now [supported on Cosmos via the use of ETags](xref:core/providers/cosmos/index#optimistic-concurrency-with-etags).
-* The new `WithPartitionKey` method allows the Cosmos [partition key](xref:core/providers/cosmos/index#partition-keys) to be included both in the model and in queries.
-* The string methods [`Contains`](/dotnet/api/system.string.contains), [`StartsWith`](/dotnet/api/system.string.startswith) and [`EndsWith`](/dotnet/api/system.string.endswith) are now translated for Cosmos.
-* The C# `is` operator is now translated on Cosmos.
+* [Azure Cosmos DB connection settings](xref:core/providers/cosmos/index#cosmos-options) have been expanded.
+* Optimistic concurrency is now [supported on Azure Cosmos DB via the use of ETags](xref:core/providers/cosmos/index#optimistic-concurrency-with-etags).
+* The new `WithPartitionKey` method allows the Azure Cosmos DB [partition key](xref:core/providers/cosmos/index#partition-keys) to be included both in the model and in queries.
+* The string methods [`Contains`](/dotnet/api/system.string.contains), [`StartsWith`](/dotnet/api/system.string.startswith) and [`EndsWith`](/dotnet/api/system.string.endswith) are now translated for Azure Cosmos DB.
+* The C# `is` operator is now translated on Azure Cosmos DB.
 
 ### Sqlite
 
@@ -381,8 +381,8 @@ For further information, [see the full documentation on event counters](xref:cor
 
 * Change-tracking proxies can be generated that automatically implement [INotifyPropertyChanging](/dotnet/api/system.componentmodel.inotifypropertychanging) and [INotifyPropertyChanged](/dotnet/api/system.componentmodel.inotifypropertychanged). This provides an alternative approach to change-tracking that doesn't scan for changes when `SaveChanges` is called.
 * A <xref:System.Data.Common.DbConnection> or connection string can now be changed on an already-initialized DbContext.
-* The new <xref:Microsoft.EntityFrameworkCore.ChangeTracking.ChangeTracker.Clear%2A?displayProperty=nameWithType> method clears the DbContext of all tracked entities. This should usually not be needed when using the best practice of creating a new, short-lived context instance for each unit-of-work. However, if there is a need to reset the state of a DbContext instance, then using the new `Clear()` method is more efficient and robust than mass-detaching all entities.
-* The EF Core command line tools now automatically configure the `ASPNETCORE_ENVIRONMENT` _and_ `DOTNET_ENVIRONMENT` environment variables to "Development". This brings the experience when using the generic host in line with the experience for ASP.NET Core during development.
-* Custom command-line arguments can be flowed into <xref:Microsoft.EntityFrameworkCore.Design.IDesignTimeDbContextFactory%601>, allowing applications to control how the context is created and initialized.
+* The new <xref:Microsoft.EntityFrameworkCore.ChangeTracking.ChangeTracker.Clear*?displayProperty=nameWithType> method clears the DbContext of all tracked entities. This should usually not be needed when using the best practice of creating a new, short-lived context instance for each unit-of-work. However, if there is a need to reset the state of a DbContext instance, then using the new `Clear()` method is more efficient and robust than mass-detaching all entities.
+* The EF Core command line tools now automatically configure the `ASPNETCORE_ENVIRONMENT` *and* `DOTNET_ENVIRONMENT` environment variables to "Development". This brings the experience when using the generic host in line with the experience for ASP.NET Core during development.
+* Custom command-line arguments can be flowed into <xref:Microsoft.EntityFrameworkCore.Design.IDesignTimeDbContextFactory`1>, allowing applications to control how the context is created and initialized.
 * The index fill factor can now be [configured on SQL Server](xref:core/providers/sql-server/indexes#fill-factor).
-* The new <xref:Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.IsRelational%2A> property can be used to distinguish when using a relational provider and a non-relation provider (such as InMemory).
+* The new <xref:Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.IsRelational*> property can be used to distinguish when using a relational provider and a non-relation provider (such as in-memory).

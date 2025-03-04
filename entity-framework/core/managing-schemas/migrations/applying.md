@@ -1,8 +1,8 @@
 ---
 title: Applying Migrations - EF Core
 description: Strategies for applying schema migrations to production and development databases using Entity Framework Core
-author: bricelam
-ms.date: 11/02/2021
+author: SamMonoRT
+ms.date: 10/29/2024
 uid: core/managing-schemas/migrations/applying
 ---
 # Applying Migrations
@@ -161,10 +161,7 @@ For more information on applying migrations via the command-line tools, see the 
 
 ## Bundles
 
-> [!NOTE]
-> This feature was introduced in EF Core 6.0.
-
-Migration bundles are single-file executables than can be used to apply migrations to a database. They address some of the shortcomings of the SQL script and command-line tools:
+Migration bundles are single-file executables that can be used to apply migrations to a database. They address some of the shortcomings of the SQL script and command-line tools:
 
 * Executing SQL scripts requires additional tools.
 * The transaction handling and continue-on-error behavior of these tools are inconsistent and sometimes unexpected. This can leave your database in an undefined state if a failure occurs when applying migrations.
@@ -209,24 +206,104 @@ The resulting executable is named `efbundle` by default. It can be used to updat
 
 Arguments:
 
-Argument                   | Description
--------------------------- | -----------
-<nobr>`<MIGRATION>`</nobr> | The target migration. If '0', all migrations will be reverted. Defaults to the last migration.
+| Argument                   | Description                                                                                    |
+|----------------------------|------------------------------------------------------------------------------------------------|
+| <nobr>`<MIGRATION>`</nobr> | The target migration. If '0', all migrations will be reverted. Defaults to the last migration. |
 
 Options:
 
-Option                                   | Short             | Description
----------------------------------------- | ----------------- | -----------
-<nobr>`--connection <CONNECTION>`</nobr> |                   | The connection string to the database. Defaults to the one specified in AddDbContext or OnConfiguring.
-`--verbose`                              | <nobr>`-v`</nobr> | Show verbose output.
-`--no-color`                             |                   | Don't colorize output.
-`--prefix-output`                        |                   | Prefix output with level.
+| Option                                   | Short             | Description                                                                                            |
+|------------------------------------------|-------------------|--------------------------------------------------------------------------------------------------------|
+| <nobr>`--connection <CONNECTION>`</nobr> |                   | The connection string to the database. Defaults to the one specified in AddDbContext or OnConfiguring. |
+| `--verbose`                              | <nobr>`-v`</nobr> | Show verbose output.                                                                                   |
+| `--no-color`                             |                   | Don't colorize output.                                                                                 |
+| `--prefix-output`                        |                   | Prefix output with level.                                                                              |
 
-The following example applies migrations to a local SQL Server instance using the specified username and password.
+The following example applies migrations to a local SQL Server instance using the specified username and credentials:
 
 ```powershell
-.\efbundle.exe --connection 'Data Source=(local)\MSSQLSERVER;Initial Catalog=Blogging;User ID=myUsername;Password=myPassword'
+.\efbundle.exe --connection 'Data Source=(local)\MSSQLSERVER;Initial Catalog=Blogging;User ID=myUsername;Password={;'$Credential;'here'}'
 ```
+
+> [!WARNING]
+> Don't forget to copy appsettings.json alongside your bundle. The bundle relies on the presence of appsettings.json in the execution directory.
+
+### Migration bundle example
+
+A bundle needs migrations to include. These are created using `dotnet ef migrations add` as described in [_Create your first migration_](xref:core/managing-schemas/migrations/index#create-your-first-migration). Once you have migrations ready to deploy, create a bundle using the `dotnet ef migrations bundle`. For example:
+
+```dotnetcli
+PS C:\local\AllTogetherNow\SixOh> dotnet ef migrations bundle
+Build started...
+Build succeeded.
+Building bundle...
+Done. Migrations Bundle: C:\local\AllTogetherNow\SixOh\efbundle.exe
+PS C:\local\AllTogetherNow\SixOh>
+```
+
+The output is an executable suitable for your target operating system. In my case this is Windows x64, so I get an `efbundle.exe` dropped in my local folder. Running this executable applies the migrations contained within it:
+
+```dotnetcli
+PS C:\local\AllTogetherNow\SixOh> .\efbundle.exe
+Applying migration '20210903083845_MyMigration'.
+Done.
+PS C:\local\AllTogetherNow\SixOh>
+```
+
+As with `dotnet ef database update` or `Update-Database`, migrations are applied to the database only if they have not been already applied. For example, running the same bundle again does nothing, since there are no new migrations to apply:
+
+```dotnetcli
+PS C:\local\AllTogetherNow\SixOh> .\efbundle.exe
+No migrations were applied. The database is already up to date.
+Done.
+PS C:\local\AllTogetherNow\SixOh>
+```
+
+However, if changes are made to the model and more migrations are generated with `dotnet ef migrations add`, then these can be bundled into a new executable ready to apply. For example:
+
+```dotnetcli
+PS C:\local\AllTogetherNow\SixOh> dotnet ef migrations add SecondMigration
+Build started...
+Build succeeded.
+Done. To undo this action, use 'ef migrations remove'
+PS C:\local\AllTogetherNow\SixOh> dotnet ef migrations add Number3
+Build started...
+Build succeeded.
+Done. To undo this action, use 'ef migrations remove'
+PS C:\local\AllTogetherNow\SixOh> dotnet ef migrations bundle --force
+Build started...
+Build succeeded.
+Building bundle...
+Done. Migrations Bundle: C:\local\AllTogetherNow\SixOh\efbundle.exe
+PS C:\local\AllTogetherNow\SixOh>
+```
+
+> [!TIP]
+> The `--force` option can be used to overwrite the existing bundle with a new one.
+
+Executing this new bundle applies these two new migrations to the database:
+
+```dotnetcli
+PS C:\local\AllTogetherNow\SixOh> .\efbundle.exe
+Applying migration '20210903084526_SecondMigration'.
+Applying migration '20210903084538_Number3'.
+Done.
+PS C:\local\AllTogetherNow\SixOh>
+```
+
+By default, the bundle uses the database connection string from your application's configuration. However, a different database can be migrated by passing the connection string on the command line. For example:
+
+```dotnetcli
+PS C:\local\AllTogetherNow\SixOh> .\efbundle.exe --connection "Data Source=(LocalDb)\MSSQLLocalDB;Database=SixOhProduction"
+Applying migration '20210903083845_MyMigration'.
+Applying migration '20210903084526_SecondMigration'.
+Applying migration '20210903084538_Number3'.
+Done.
+PS C:\local\AllTogetherNow\SixOh>
+```
+
+> [!NOTE]
+> This time, all three migrations were applied, since none of them had yet been applied to the production database.
 
 ***
 
@@ -234,32 +311,32 @@ The following example applies migrations to a local SQL Server instance using th
 
 It's possible for the application itself to apply migrations programmatically, typically during startup. While productive for local development and testing of migrations, this approach is inappropriate for managing production databases, for the following reasons:
 
-* If multiple instances of your application are running, both applications could attempt to apply the migration concurrently and fail (or worse, cause data corruption).
+* For versions of EF prior to 9, if multiple instances of your application are running, both applications could attempt to apply the migration concurrently and fail (or worse, cause data corruption).
 * Similarly, if an application is accessing the database while another application migrates it, this can cause severe issues.
 * The application must have elevated access to modify the database schema. It's generally good practice to limit the application's database permissions in production.
 * It's important to be able to roll back an applied migration in case of an issue. The other strategies provide this easily and out of the box.
 * The SQL commands are applied directly by the program, without giving the developer a chance to inspect or modify them. This can be dangerous in a production environment.
 
-To apply migrations programmatically, call `context.Database.Migrate()`. For example, a typical ASP.NET application can do the following:
+To apply migrations programmatically, call `context.Database.MigrateAsync()`. For example, a typical ASP.NET application can do the following:
 
 ```csharp
-public static void Main(string[] args)
+public static async Task Main(string[] args)
 {
     var host = CreateHostBuilder(args).Build();
 
     using (var scope = host.Services.CreateScope())
     {
         var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        db.Database.Migrate();
+        await db.Database.MigrateAsync();
     }
 
     host.Run();
 }
 ```
 
-Note that `Migrate()` builds on top of the `IMigrator` service, which can be used for more advanced scenarios. Use `myDbContext.GetInfrastructure().GetService<IMigrator>()` to access it.
+Note that `MigrateAsync()` builds on top of the `IMigrator` service, which can be used for more advanced scenarios. Use `myDbContext.GetInfrastructure().GetService<IMigrator>()` to access it.
 
 > [!WARNING]
 >
 > * Carefully consider before using this approach in production. Experience has shown that the simplicity of this deployment strategy is outweighed by the issues it creates. Consider generating SQL scripts from migrations instead.
-> * Don't call `EnsureCreated()` before `Migrate()`. `EnsureCreated()` bypasses Migrations to create the schema, which causes `Migrate()` to fail.
+> * Don't call `EnsureCreatedAsync()` before `MigrateAsync()`. `EnsureCreatedAsync()` bypasses Migrations to create the schema, which causes `MigrateAsync()` to fail.

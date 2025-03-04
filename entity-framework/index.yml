@@ -1,17 +1,16 @@
 ### YamlMime:Hub
 
-title: Entity Framework documentation
-summary: Entity Framework Core is a modern object-database mapper for .NET. It supports LINQ queries, change tracking, updates, and schema migrations. EF Core works with many databases, including SQL Database (on-premises and Azure), SQLite, MySQL, PostgreSQL, and Azure Cosmos DB.
+title: Entity Framework documentation hub 
+summary: Entity Framework is a modern object-relation mapper that lets you build a clean, portable, and high-level data access layer with .NET (C#) across a variety of databases, including SQL Database (on-premises and Azure), SQLite, MySQL, PostgreSQL, and Azure Cosmos DB. It supports LINQ queries, change tracking, updates, and schema migrations.
 brand: dotnet
 
 metadata:
-  title: Entity Framework documentation
-  description: Learn to use Entity Framework Core, a modern object-database mapper for .NET that supports LINQ queries, change tracking, updates, and schema migrations. Browse tutorials, sample code, fundamentals, API reference and more.
-  ms.product: entity-framework
+  title: Entity Framework documentation hub
+  description: Entity Framework is a modern object-relation mapper that lets you build a clean, portable, and high-level data access layer with .NET (C#) across a variety of databases, including SQL Database (on-premises and Azure), SQLite, MySQL, PostgreSQL, and Azure Cosmos DB. It supports LINQ queries, change tracking, updates, and schema migrations.
   ms.topic: hub-page
-  author: WadePickett
-  ms.author: wpickett
-  ms.date: 04/15/2020
+  author: jcjiang
+  ms.author: jiacjian
+  ms.date: 03/08/2023
 
 # highlightedContent section (optional)
 # Maximum of 8 items
@@ -19,29 +18,29 @@ highlightedContent:
 # itemType: architecture | concept | deploy | download | get-started | how-to-guide | learn | overview | quickstart | reference | tutorial | video | whats-new
   items:
     # Card
-    - title: "Entity Framework Core"
+    - title: "Tutorial: Access a relational database using C# (Entity Framework Core)"
       itemType: get-started
       url: core/get-started/overview/first-app.md
     # Card
-    - title: "Persist and retrieve relational data with Entity Framework Core"
-      itemType: learn
-      url: /learn/modules/persist-data-ef-core/
-    # Card
-    - title: "Releases and platforms"
-      itemType: whats-new
-      url: core/what-is-new/index.md
-    # Card
-    - title: "Supported Databases"
+    - title: "Supported database management systems"
       itemType: overview
       url: core/providers/index.md
     # Card
-    - title: "Choose a version that is right for you"
+    - title: "Which version should I use - EF Core or EF 6?"
       itemType: overview
       url: efcore-and-ef6/index.md
     # Card
     - title: "API reference browser"
       itemType: reference
-      url: /dotnet/api/?view=efcore-3.1
+      url: /dotnet/api/?view=efcore-8.0&preserve-view=true
+    # Card
+    - title: ".NET (C#) data documentation hub"
+      itemType: reference
+      url: dotnet-data/index.yml
+    # Card
+    - title: "Releases and platforms"
+      itemType: whats-new
+      url: core/what-is-new/index.md
 
 # Card with summary style
 additionalContent:
@@ -52,6 +51,8 @@ additionalContent:
       # Card
       - title: Develop your first app
         links:
+          - url: /training/modules/persist-data-ef-core/
+            text: "Hands-on Training (44 minutes): Persist and retrieve relational data by using Entity Framework Core"
           - url: core/get-started/overview/first-app.md
             text: ".NET Core console app accessing SQLite with EF Core"
           - url: /aspnet/core/data/ef-rp/
@@ -60,8 +61,8 @@ additionalContent:
             text: "ASP.NET Core MVC web app accessing SQL Server with EF Core"
           - url: core/get-started/wpf.md
             text: "WPF .NET Core app accessing SQLite with EF Core"
-          - url: core/get-started/xamarin.md
-            text: "Xamarin mobile app accessing SQLite with EF Core"
+          - url: core/get-started/winforms.md
+            text: "Windows Forms .NET Core app accessing SQLite with EF Core"
       # Card
       - title: Supported databases
         links:
@@ -74,7 +75,11 @@ additionalContent:
           - url: https://github.com/PomeloFoundation/Pomelo.EntityFrameworkCore.MySql
             text: "MySQL and MariaDB"
           - url: core/providers/cosmos/index.md
-            text: "Cosmos DB SQL API"
+            text: "Azure Cosmos DB for NoSQL"
+          - url: https://www.mongodb.com/docs/entity-framework/current/
+            text: "MongoDB"            
+          - url: https://github.com/FirebirdSQL/NETProvider
+            text: "Firebird"
           - url: core/providers/in-memory/index.md
             text: "In memory (testing)"
           - url: core/providers/index.md
@@ -92,10 +97,8 @@ additionalContent:
             text: "Blazor Server"
           - url: core/get-started/wpf.md
             text: "Windows Presentation Foundation (WPF)"
-          - url: ef6/fundamentals/databinding/winforms.md
+          - url: core/get-started/winforms.md
             text: "Windows Forms (WinForms)"
-          - url: core/get-started/xamarin.md
-            text: "Xamarin"
       # Card
       - title: Fundamentals
         links:
@@ -176,7 +179,7 @@ additionalContent:
             text: "Migration - custom history table"
           - url: core/managing-schemas/ensure-created.md
             text: "Create and drop APIs"
-          - url: core/managing-schemas/scaffolding.md
+          - url: core/managing-schemas/scaffolding/index.md
             text: "Reverse engineering (scaffolding)"
       # Card
       - title: Save data
@@ -211,7 +214,7 @@ additionalContent:
           - url: core/cli/services.md
             text: "Design-time services"
       # Card
-      - title: Previous Versions
+      - title: Previous versions
         links:
           - url: ef6/get-started.md
             text: "Entity Framework 6"

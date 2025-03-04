@@ -1,7 +1,7 @@
 ---
 title: Change Tracker Debugging - EF Core
 description: Using the ChangeTracker DebugView and log messages to debug EF Core change tracking
-author: ajcvickers
+author: SamMonoRT
 ms.date: 12/30/2020
 uid: core/change-tracking/debug-views
 ---
@@ -10,7 +10,7 @@ uid: core/change-tracking/debug-views
 
 The Entity Framework Core (EF Core) change tracker generates two kinds of output to help with debugging:
 
-- The <xref:Microsoft.EntityFrameworkCore.ChangeTracking.ChangeTracker.DebugView%2A?displayProperty=nameWithType> provides a human-readable view of all entities being tracked
+- The <xref:Microsoft.EntityFrameworkCore.ChangeTracking.ChangeTracker.DebugView*?displayProperty=nameWithType> provides a human-readable view of all entities being tracked
 - Debug-level log messages are generated when the change tracker detects state and fixes up relationships
 
 > [!TIP]

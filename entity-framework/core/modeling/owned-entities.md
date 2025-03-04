@@ -13,7 +13,7 @@ Owned entities are essentially a part of the owner and cannot exist without it, 
 
 ## Configuring types as owned
 
-In most providers, entity types are never configured as owned by convention - you must explicitly use the `OwnsOne` method in `OnModelCreating` or annotate the type with `OwnedAttribute` to configure the type as owned. The Azure Cosmos DB provider is an exception to this. Because Cosmos DB is a document database, the provider configures all related entity types as owned by default.
+In most providers, entity types are never configured as owned by convention - you must explicitly use the `OwnsOne` method in `OnModelCreating` or annotate the type with `OwnedAttribute` to configure the type as owned. The Azure Cosmos DB provider is an exception to this. Because Azure Cosmos DB is a document database, the provider configures all related entity types as owned by default.
 
 In this example, `StreetAddress` is a type with no identity property. It is used as a property of the Order type to specify the shipping address for a particular order.
 
@@ -33,12 +33,12 @@ If the `ShippingAddress` property is private in the `Order` type, you can use th
 
 The model above is mapped to the following database schema:
 
-![Sceenshot of the database model for entity containing owned reference](_static/owned-entities-ownsone.png)
+![Screenshot of the database model for entity containing owned reference](_static/owned-entities-ownsone.png)
 
 See the [full sample project](https://github.com/dotnet/EntityFramework.Docs/tree/main/samples/core/Modeling/OwnedEntities) for more context.
 
 > [!TIP]
-> The owned entity type can be marked as required, see [Required one-to-one dependents](xref:core/modeling/relationships#one-to-one) for more information.
+> The owned entity type can be marked as required, see [Required one-to-one dependents](xref:core/modeling/relationships/navigations#required-navigations) for more information.
 
 ## Implicit keys
 
@@ -69,7 +69,7 @@ To configure a different primary key call `HasKey`.
 
 The model above is mapped to the following database schema:
 
-![Sceenshot of the database model for entity containing owned collection](_static/owned-entities-ownsmany.png)
+![Screenshot of the database model for entity containing owned collection](_static/owned-entities-ownsmany.png)
 
 ## Mapping owned types with table splitting
 
@@ -120,7 +120,7 @@ Notice the `WithOwner` call used to define the navigation property pointing back
 
 It is also possible to achieve this result using `OwnedAttribute` on both `OrderDetails` and `StreetAddress`.
 
-In addition, notice the `Navigation` call. In EFCore 5.0, navigation properties to owned types can be further configured [as for non-owned navigation properties](xref:core/modeling/relationships#configuring-navigation-properties).
+In addition, notice the `Navigation` call. Navigation properties to owned types can be further configured [as for non-owned navigation properties](xref:core/modeling/relationships/navigations#required-navigations).
 
 The model above is mapped to the following database schema:
 

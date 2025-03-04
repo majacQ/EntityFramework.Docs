@@ -15,9 +15,6 @@ You can specify an index over a column as follows:
 
 [!code-csharp[Main](../../../samples/core/Modeling/IndexesAndConstraints/DataAnnotations/Index.cs?name=Index&highlight=1)]
 
-> [!NOTE]
-> Configuring indexes via Data Annotations has been introduced in EF Core 5.0.
-
 ## [Fluent API](#tab/fluent-api)
 
 [!code-csharp[Main](../../../samples/core/Modeling/IndexesAndConstraints/FluentAPI/Index.cs?name=Index&highlight=4)]
@@ -26,8 +23,6 @@ You can specify an index over a column as follows:
 
 > [!NOTE]
 > By convention, an index is created in each property (or set of properties) that are used as a foreign key.
->
-> EF Core only supports one index per distinct set of properties. If you configure an index on a set of properties that already has an index defined, either by convention or previous configuration, then you will be changing the definition of that index. This is useful if you want to further configure an index that was created by convention.
 
 ## Composite index
 
@@ -61,7 +56,38 @@ By default, indexes aren't unique: multiple rows are allowed to have the same va
 
 Attempting to insert more than one entity with the same values for the index's column set will cause an exception to be thrown.
 
-## Index name
+## Index sort order
+
+> [!NOTE]
+> This feature is being introduced in EF Core 7.0.
+
+In most databases, each column covered by an index can be either ascending or descending. For indexes covering only one column, this typically does not matter: the database can traverse the index in reverse order as needed. However, for composite indexes, the ordering can be crucial for good performance, and can mean the difference between an index getting used by a query or not. In general, the index columns' sort orders should correspond to those specified in the `ORDER BY` clause of your query.
+
+The index sort order is ascending by default. You can make all columns have descending order as follows:
+
+### [Data Annotations](#tab/data-annotations)
+
+[!code-csharp[Main](../../../samples/core/Modeling/IndexesAndConstraints/DataAnnotations/IndexDescending.cs?name=IndexDescending&highlight=1)]
+
+### [Fluent API](#tab/fluent-api)
+
+[!code-csharp[Main](../../../samples/core/Modeling/IndexesAndConstraints/FluentAPI/IndexDescending.cs?name=IndexDescending&highlight=5)]
+
+***
+
+You may also specify the sort order on a column-by-column basis as follows:
+
+### [Data Annotations](#tab/data-annotations)
+
+[!code-csharp[Main](../../../samples/core/Modeling/IndexesAndConstraints/DataAnnotations/IndexDescendingAscending.cs?name=IndexDescendingAscending&highlight=1)]
+
+### [Fluent API](#tab/fluent-api)
+
+[!code-csharp[Main](../../../samples/core/Modeling/IndexesAndConstraints/FluentAPI/IndexDescendingAscending.cs?name=IndexDescendingAscending&highlight=5)]
+
+***
+
+## Index naming and multiple indexes
 
 By convention, indexes created in a relational database are named `IX_<type name>_<property name>`. For composite indexes, `<property name>` becomes an underscore separated list of property names.
 
@@ -76,6 +102,34 @@ You can set the name of the index created in the database:
 [!code-csharp[Main](../../../samples/core/Modeling/IndexesAndConstraints/FluentAPI/IndexName.cs?name=IndexName&highlight=5)]
 
 ***
+
+Note that if you call `HasIndex` more than once on the same set of properties, that continues to configure a single index rather than create a new one:
+
+```csharp
+modelBuilder.Entity<Person>()
+    .HasIndex(p => new { p.FirstName, p.LastName })
+    .HasDatabaseName("IX_Names_Ascending");
+
+modelBuilder.Entity<Person>()
+    .HasIndex(p => new { p.FirstName, p.LastName })
+    .HasDatabaseName("IX_Names_Descending")
+    .IsDescending();
+```
+
+Since the second `HasIndex` call overrides the first one, this creates only a single, descending index. This can be useful for further configuring an index that was created by convention.
+
+To create multiple indexes over the same set of properties, pass a name to the `HasIndex`, which will be used to identify the index in the EF model, and to distinguish it from other indexes over the same properties:
+
+```c#
+modelBuilder.Entity<Person>()
+    .HasIndex(p => new { p.FirstName, p.LastName }, "IX_Names_Ascending");
+
+modelBuilder.Entity<Person>()
+    .HasIndex(p => new { p.FirstName, p.LastName }, "IX_Names_Descending")
+    .IsDescending();
+```
+
+Note that this name is also used as a default for the database name, so explicitly calling `HasDatabaseName` isn't required.
 
 ## Index filter
 

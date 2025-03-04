@@ -1,11 +1,15 @@
 ---
 title: MSL Specification - EF6
 description: MSL Specification in Entity Framework 6
-author: ajcvickers
-ms.date: 10/23/2016
+author: SamMonoRT
+ms.date: 08/23/2024
 uid: ef6/modeling/designer/advanced/edmx/msl-spec
 ---
 # MSL Specification
+
+> [!NOTE]
+> MSL v1 is unsupported, please update to V3
+
 Mapping specification language (MSL) is an XML-based language that describes the mapping between the conceptual model and storage model of an Entity Framework application.
 
 In an Entity Framework application, mapping metadata is loaded from an .msl file (written in MSL) at build time. Entity Framework uses mapping metadata at runtime to translate queries against the conceptual model to store-specific commands.
@@ -19,8 +23,8 @@ Versions of MSL are differentiated by XML namespaces.
 | MSL Version | XML Namespace                                        |
 |:------------|:-----------------------------------------------------|
 | MSL v1      | urn:schemas-microsoft-com:windows:storage:mapping:CS |
-| MSL v2      | https://schemas.microsoft.com/ado/2008/09/mapping/cs |
-| MSL v3      | https://schemas.microsoft.com/ado/2009/11/mapping/cs  |
+| MSL v2      | `https://schemas.microsoft.com/ado/2008/09/mapping/cs` |
+| MSL v3      | `https://schemas.microsoft.com/ado/2009/11/mapping/cs` |
 
 ## Alias Element (MSL)
 
@@ -977,7 +981,7 @@ The following example is based on the School model and shows the **InsertFunctio
 
 The **Mapping** element in mapping specification language (MSL) contains information for mapping objects that are defined in a conceptual model to a database (as described in a storage model). For more information, see CSDL Specification and SSDL Specification.
 
-The **Mapping** element is the root element for a mapping specification. The XML namespace for mapping specifications is https://schemas.microsoft.com/ado/2009/11/mapping/cs.
+The **Mapping** element is the root element for a mapping specification. The XML namespace for mapping specifications is `https://schemas.microsoft.com/ado/2009/11/mapping/cs`.
 
 The mapping element can have the following child elements (in the order listed):
 

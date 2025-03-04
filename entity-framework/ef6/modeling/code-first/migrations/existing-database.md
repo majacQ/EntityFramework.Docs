@@ -1,7 +1,7 @@
 ---
 title: Code First Migrations with an existing database - EF6
 description: Code First Migrations with an existing database in Entity Framework 6
-author: ajcvickers
+author: SamMonoRT
 ms.date: 10/23/2016
 uid: ef6/modeling/code-first/migrations/existing-database
 ---
@@ -13,18 +13,6 @@ This article covers using Code First Migrations with an existing database, one t
 
 > [!NOTE]
 > This article assumes you know how to use Code First Migrations in basic scenarios. If you don’t, then you’ll need to read [Code First Migrations](xref:ef6/modeling/code-first/migrations/index) before continuing.
-
-## Screencasts
-
-If you'd rather watch a screencast than read this article, the following two videos cover the same content as this article.
-
-### Video One: "Migrations - Under the Hood"
-
-[This screencast](https://channel9.msdn.com/blogs/ef/migrations-under-the-hood) covers how migrations tracks and uses information about the model to detect model changes.
-
-### Video Two: "Migrations - Existing Databases"
-
-Building on the concepts from the previous video, [this screencast](https://channel9.msdn.com/blogs/ef/migrations-existing-databases) covers how to enable and use migrations with an existing database.
 
 ## Step 1: Create a model
 

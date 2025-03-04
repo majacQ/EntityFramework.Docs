@@ -1,47 +1,35 @@
+﻿using System.Linq;
 using Microsoft.EntityFrameworkCore;
 
-namespace EFModeling.DataSeeding
+namespace EFModeling.DataSeeding;
+
+public class DataSeedingContext : DbContext
 {
-    public class DataSeedingContext : DbContext
-    {
-        public DbSet<Blog> Blogs { get; set; }
-        public DbSet<Post> Posts { get; set; }
+    public DbSet<Blog> Blogs { get; set; }
+    public DbSet<Post> Posts { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-            => optionsBuilder
-                .UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=EFDataSeeding;Trusted_Connection=True");
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Blog>(entity => { entity.Property(e => e.Url).IsRequired(); });
-
-            #region BlogSeed
-            modelBuilder.Entity<Blog>().HasData(new Blog { BlogId = 1, Url = "http://sample.com" });
-            #endregion
-
-            modelBuilder.Entity<Post>(
-                entity =>
+    #region ContextOptionSeeding
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        => optionsBuilder
+            .UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=EFDataSeeding;Trusted_Connection=True;ConnectRetryCount=0")
+            .UseSeeding((context, _) =>
+            {
+                var testBlog = context.Set<Blog>().FirstOrDefault(b => b.Url == "http://test.com");
+                if (testBlog == null)
                 {
-                    entity.HasOne(d => d.Blog)
-                        .WithMany(p => p.Posts)
-                        .HasForeignKey("BlogId");
-                });
-
-            #region PostSeed
-            modelBuilder.Entity<Post>().HasData(
-                new Post { BlogId = 1, PostId = 1, Title = "First post", Content = "Test 1" });
-            #endregion
-
-            #region AnonymousPostSeed
-            modelBuilder.Entity<Post>().HasData(
-                new { BlogId = 1, PostId = 2, Title = "Second post", Content = "Test 2" });
-            #endregion
-
-            #region OwnedTypeSeed
-            modelBuilder.Entity<Post>().OwnsOne(p => p.AuthorName).HasData(
-                new { PostId = 1, First = "Andriy", Last = "Svyryd" },
-                new { PostId = 2, First = "Diego", Last = "Vega" });
-            #endregion
-        }
-    }
+                    context.Set<Blog>().Add(new Blog { Url = "http://test.com" });
+                    context.SaveChanges();
+                }
+            })
+            .UseAsyncSeeding(async (context, _, cancellationToken) =>
+            {
+                var testBlog = await context.Set<Blog>().FirstOrDefaultAsync(b => b.Url == "http://test.com", cancellationToken);
+                if (testBlog == null)
+                {
+                    context.Set<Blog>().Add(new Blog { Url = "http://test.com" });
+                    await context.SaveChangesAsync(cancellationToken);
+                }
+            });
+    #endregion
 }
+

@@ -1,21 +1,22 @@
-﻿using EFSaving.Basics;
+﻿using System.Threading.Tasks;
+using EFSaving.Basics;
 using EFSaving.Transactions;
 
-namespace EFSaving
+namespace EFSaving;
+
+internal class Program
 {
-    internal class Program
+    private static async Task Main(string[] args)
     {
-        private static void Main(string[] args)
-        {
-            Sample.Run();
-            RelatedData.Sample.Run();
-            CascadeDelete.Sample.Run();
-            Concurrency.Sample.Run();
-            ControllingTransaction.Run();
-            ManagingSavepoints.Run();
-            SharingTransaction.Run();
-            ExternalDbTransaction.Run();
-            Disconnected.Sample.Run();
-        }
+        await Sample.Run();
+        await RelatedData.Sample.Run();
+        await CascadeDelete.Sample.Run();
+        await Concurrency.BasicSample.Run();
+        await Concurrency.ConflictResolutionSample.Run();
+        await ControllingTransaction.Run();
+        await ManagingSavepoints.Run();
+        await SharingTransaction.Run();
+        await ExternalDbTransaction.Run();
+        await Disconnected.Sample.Run();
     }
 }

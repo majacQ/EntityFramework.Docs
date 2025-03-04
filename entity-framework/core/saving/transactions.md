@@ -26,15 +26,15 @@ You can use the `DbContext.Database` API to begin, commit, and rollback transact
 
 While all relational database providers support transactions, other providers types may throw or no-op when transaction APIs are called.
 
-## Savepoints
-
 > [!NOTE]
-> This feature was introduced in EF Core 5.0.
+> Manually controlling transactions in this way is incompatible with implicitly invoked retrying execution strategies. See [Connection Resiliency](xref:core/miscellaneous/connection-resiliency#execution-strategies-and-transactions) for more information.
+
+## Savepoints
 
 When `SaveChanges` is invoked and a transaction is already in progress on the context, EF automatically creates a *savepoint* before saving any data. Savepoints are points within a database transaction which may later be rolled back to, if an error occurs or for any other reason. If `SaveChanges` encounters any error, it automatically rolls the transaction back to the savepoint, leaving the transaction in the same state as if it had never started. This allows you to possibly correct issues and retry saving, in particular when [optimistic concurrency](xref:core/saving/concurrency) issues occur.
 
 > [!WARNING]
-> Savepoints are incompatible with SQL Server's Multiple Active Result Sets, and are not used. If an error occurs during `SaveChanges`, the transaction may be left in an unknown state.
+> Savepoints are incompatible with SQL Server's Multiple Active Result Sets (MARS). Savepoints will not be created by EF when MARS is enabled on the connection, even if MARS is not actively in use. If an error occurs during SaveChanges, the transaction may be left in an unknown state.
 
 It's also possible to manually manage savepoints, just as it is with transactions. The following example creates a savepoint within a transaction, and rolls back to it on failure:
 
@@ -82,7 +82,7 @@ public class BloggingContext : DbContext
 
 You can now create multiple context instances that share the same connection. Then use the `DbContext.Database.UseTransaction(DbTransaction)` API to enlist both contexts in the same transaction.
 
-[!code-csharp[Main](../../../samples/core/Saving/Transactions/SharingTransaction.cs?name=Transaction&highlight=1-3,6,14,21-23)]
+[!code-csharp[Main](../../../samples/core/Saving/Transactions/SharingTransaction.cs?name=Transaction&highlight=1-4,7,15,22-24)]
 
 ## Using external DbTransactions (relational databases only)
 
@@ -102,6 +102,11 @@ It is also possible to enlist in an explicit transaction.
 
 [!code-csharp[Main](../../../samples/core/Saving/Transactions/CommitableTransaction.cs?name=Transaction&highlight=1-2,15,28-30)]
 
+> [!NOTE]
+> If you're using async APIs, be sure to specify [TransactionScopeAsyncFlowOption.Enabled](/dotnet/api/system.transactions.transactionscopeasyncflowoption) in the `TransactionScope` constructor to ensure that the ambient transaction flows across async calls.
+
+For more information on `TransactionScope` and ambient transactions, [see this documentation](/dotnet/framework/data/transactions/implementing-an-implicit-transaction-using-transaction-scope).
+
 ### Limitations of System.Transactions
 
 1. EF Core relies on database providers to implement support for System.Transactions. If a provider does not implement support for System.Transactions, it is possible that calls to these APIs will be completely ignored. SqlClient supports it.
@@ -109,4 +114,6 @@ It is also possible to enlist in an explicit transaction.
    > [!IMPORTANT]
    > It is recommended that you test that the API behaves correctly with your provider before you rely on it for managing transactions. You are encouraged to contact the maintainer of the database provider if it does not.
 
-2. The .NET Core implementation of System.Transactions does not currently include support for distributed transactions, therefore you cannot use `TransactionScope` or `CommittableTransaction` to coordinate transactions across multiple resource managers. Support is tracked by [this issue](https://github.com/dotnet/runtime/issues/715).
+2. Distributed transaction support in System.Transactions was added to .NET 7.0 for Windows only. Any attempt to use distributed transactions on older .NET versions or on non-Windows platforms will fail.
+
+3. TransactionScope does not support async commit/rollback; that means that disposing it synchronously blocks the executing thread until the operation is complete.

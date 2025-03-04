@@ -1,7 +1,7 @@
 ---
 title: SQLite Database Provider - Spatial Data - EF Core
 description: Using spatial data with the Entity Framework Core SQLite database provider
-author: bricelam
+author: SamMonoRT
 ms.date: 10/02/2020
 uid: core/providers/sqlite/spatial
 ---
@@ -11,7 +11,7 @@ This page includes additional information about using spatial data with the SQLi
 
 ## Installing SpatiaLite
 
-On Windows, the native mod_spatialite library is distributed as a NuGet package dependency. Other platforms need to install it separately. This is typically done using a software package manager. For example, you can use APT on Debian and Ubuntu; and Homebrew on MacOS.
+On Windows, the native `mod_spatialite` library is distributed as a [NuGet package](https://www.nuget.org/packages/mod_spatialite) dependency. Other platforms need to install it separately. This is typically done using a software package manager. For example, you can use APT on Debian and Ubuntu; and Homebrew on MacOS.
 
 ```bash
 # Debian/Ubuntu
@@ -127,7 +127,16 @@ polygon.ExteriorRing                        | ExteriorRing(@polygon)
 polygon.GetInteriorRingN(n)                 | InteriorRingN(@polygon, @n + 1)
 polygon.NumInteriorRings                    | NumInteriorRing(@polygon)
 
+### Aggregate functions
+
+.NET                                                              | SQL                           | Added in
+----------------------------------------------------------------- | ----------------------------- | --------
+GeometryCombiner.Combine(group.Select(x => x.Property))           | Collect(Property)             | EF Core 7.0
+ConvexHull.Create(group.Select(x => x.Property))                  | ConvexHull(Collect(Property)) | EF Core 7.0
+UnaryUnionOp.Union(group.Select(x => x.Property))                 | GUnion(Property)              | EF Core 7.0
+EnvelopeCombiner.CombineAsGeometry(group.Select(x => x.Property)) | Extent(Property)              | EF Core 7.0
+
 ## Additional resources
 
 * [SpatiaLite Homepage](https://www.gaia-gis.it/fossil/libspatialite)
-* [NetTopologySuite Docs](https://nettopologysuite.github.io/NetTopologySuite/)
+* [NetTopologySuite API Documentation](https://nettopologysuite.github.io/NetTopologySuite/api/NetTopologySuite.html)

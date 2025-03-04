@@ -1,8 +1,8 @@
 ---
 title: Breaking changes in EF Core 5.0 - EF Core
 description: Complete list of breaking changes introduced in Entity Framework Core 5.0
-author: bricelam
-ms.date: 10/08/2021
+author: SamMonoRT
+ms.date: 09/21/2022
 uid: core/what-is-new/ef-core-5.0/breaking-changes
 ---
 
@@ -23,14 +23,14 @@ The following API and behavior changes have the potential to break existing appl
 | [ToView() is treated differently by migrations](#toview)                                                                              | Medium     |
 | [ToTable(null) marks the entity type as not mapped to a table](#totable)                                                              | Medium     |
 | [Removed HasGeometricDimension method from SQLite NTS extension](#geometric-sqlite)                                                   | Low        |
-| [Cosmos: Partition key is now added to the primary key](#cosmos-partition-key)                                                        | Low        |
-| [Cosmos: `id` property renamed to `__id`](#cosmos-id)                                                                                 | Low        |
-| [Cosmos: byte[] is now stored as a base64 string instead of a number array](#cosmos-byte)                                             | Low        |
-| [Cosmos: GetPropertyName and SetPropertyName were renamed](#cosmos-metadata)                                                          | Low        |
+| [Azure Cosmos DB: Partition key is now added to the primary key](#cosmos-partition-key)                                               | Low        |
+| [Azure Cosmos DB: `id` property renamed to `__id`](#cosmos-id)                                                                        | Low        |
+| [Azure Cosmos DB: byte[] is now stored as a base64 string instead of a number array](#cosmos-byte)                                    | Low        |
+| [Azure Cosmos DB: GetPropertyName and SetPropertyName were renamed](#cosmos-metadata)                                                 | Low        |
 | [Value generators are called when the entity state is changed from Detached to Unchanged, Updated, or Deleted](#non-added-generation) | Low        |
 | [IMigrationsModelDiffer now uses IRelationalModel](#relational-model)                                                                 | Low        |
 | [Discriminators are read-only](#read-only-discriminators)                                                                             | Low        |
-| [Provider-specific EF.Functions methods throw for InMemory provider](#no-client-methods)                                              | Low        |
+| [Provider-specific EF.Functions methods throw for in-memory provider](#no-client-methods)                                             | Low        |
 | [IndexBuilder.HasName is now obsolete](#index-obsolete)                                                                               | Low        |
 | [A pluralizer is now included for scaffolding reverse engineered models](#pluralizer)                                                 | Low        |
 | [INavigationBase replaces INavigation in some APIs to support skip navigations](#inavigationbase)                                     | Low        |
@@ -81,7 +81,15 @@ We marked this method as obsolete to guide users to a more accurate overload - <
 
 #### Mitigations
 
-Use the following code to get the column name for a specific table:
+If the entity type is only ever mapped to a single table, and never to views, functions, or multiple tables, the <xref:Microsoft.EntityFrameworkCore.RelationalPropertyExtensions.GetColumnBaseName(Microsoft.EntityFrameworkCore.Metadata.IReadOnlyProperty)> can be used in EF Core 5.0 and 6.0 to obtain the table name. For example:
+
+```csharp
+var columnName = property.GetColumnBaseName();
+```
+
+In EF Core 7.0, this can again be replaced with the new `GetColumnName`, which behaves as the original did for simple, single table only mappings.
+
+If the entity type may be mapped to views, functions, or multiple tables, then a <xref:Microsoft.EntityFrameworkCore.Metadata.StoreObjectIdentifier> must be obtained to identity the table, view, or function. This can be then be used to get the column name for that store object. For example:
 
 ```csharp
 var columnName = property.GetColumnName(StoreObjectIdentifier.Table("Users", null)));
@@ -328,7 +336,7 @@ modelBuilder.Entity<GeoEntity>(
 
 <a name="cosmos-partition-key"></a>
 
-### Cosmos: Partition key is now added to the primary key
+### Azure Cosmos DB: Partition key is now added to the primary key
 
 [Tracking Issue #15289](https://github.com/dotnet/efcore/issues/15289)
 
@@ -355,7 +363,7 @@ modelBuilder.Entity<Blog>()
 
 <a name="cosmos-id"></a>
 
-### Cosmos: `id` property renamed to `__id`
+### Azure Cosmos DB: `id` property renamed to `__id`
 
 [Tracking Issue #17751](https://github.com/dotnet/efcore/issues/17751)
 
@@ -383,7 +391,7 @@ modelBuilder.Entity<Blog>()
 
 <a name="cosmos-byte"></a>
 
-### Cosmos: byte[] is now stored as a base64 string instead of a number array
+### Azure Cosmos DB: byte[] is now stored as a base64 string instead of a number array
 
 [Tracking Issue #17306](https://github.com/dotnet/efcore/issues/17306)
 
@@ -405,7 +413,7 @@ Existing data stored as number arrays will still be queried correctly, but curre
 
 <a name="cosmos-metadata"></a>
 
-### Cosmos: GetPropertyName and SetPropertyName were renamed
+### Azure Cosmos DB: GetPropertyName and SetPropertyName were renamed
 
 [Tracking Issue #17874](https://github.com/dotnet/efcore/issues/17874)
 
@@ -499,7 +507,7 @@ It was possible to change the discriminator value before calling `SaveChanges`
 
 #### New behavior
 
-An exception will be throws in the above case.
+An exception will be thrown in the above case.
 
 #### Why
 
@@ -517,13 +525,13 @@ modelBuilder.Entity<BaseEntity>()
 
 <a name="no-client-methods"></a>
 
-### Provider-specific EF.Functions methods throw for InMemory provider
+### Provider-specific EF.Functions methods throw for in-memory provider
 
 [Tracking Issue #20294](https://github.com/dotnet/efcore/issues/20294)
 
 #### Old behavior
 
-Provider-specific EF.Functions methods contained implementation for client execution, which allowed them to be executed on the InMemory provider. For example, `EF.Functions.DateDiffDay` is a Sql Server specific method, which worked on InMemory provider.
+Provider-specific EF.Functions methods contained implementation for client execution, which allowed them to be executed on the in-memory provider. For example, `EF.Functions.DateDiffDay` is a Sql Server specific method, which worked on InMemory provider.
 
 #### New behavior
 
@@ -531,7 +539,7 @@ Provider-specific methods have been updated to throw an exception in their metho
 
 #### Why
 
-Provider-specific methods map to a database function. The computation done by the mapped database function can't always be replicated on the client side in LINQ. It may cause the result from the server to differ when executing the same method on client. Since these methods are used in LINQ to translate to specific database functions, they don't need to be evaluated on client side. As InMemory provider is a different *database*, these methods aren't available for this provider. Trying to execute them for InMemory provider, or any other provider that doesn't translate these methods, throws an exception.
+Provider-specific methods map to a database function. The computation done by the mapped database function can't always be replicated on the client side in LINQ. It may cause the result from the server to differ when executing the same method on client. Since these methods are used in LINQ to translate to specific database functions, they don't need to be evaluated on client side. As the in-memory provider is a different _database_, these methods aren't available for this provider. Trying to execute them for InMemory provider, or any other provider that doesn't translate these methods, throws an exception.
 
 #### Mitigations
 
@@ -648,16 +656,16 @@ For correlated collection scenarios we need to know entity's primary key in orde
 Rewrite the query to not use `GroupBy` or `Distinct` operations on the inner collection, and perform these operations on the client instead.
 
 ```csharp
-context.Parents
+(await context.Parents
     .Select(p => p.Children.Select(c => c.School))
-    .ToList()
+    .ToListAsync())
     .Select(x => x.GroupBy(c => c).Select(g => g.Key))
 ```
 
 ```csharp
-context.Parents
+(await context.Parents
     .Select(p => p.Children.Select(c => c.School))
-    .ToList()
+    .ToListAsync())
     .Select(x => x.Distinct())
 ```
 

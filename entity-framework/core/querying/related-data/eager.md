@@ -48,9 +48,6 @@ You may want to include multiple related entities for one of the entities that i
 
 ## Filtered include
 
-> [!NOTE]
-> This feature was introduced in EF Core 5.0.
-
 When applying Include to load related data, you can add certain enumerable operations to the included collection navigation, which allows for filtering and sorting of the results.
 
 Supported operations are: `Where`, `OrderBy`, `OrderByDescending`, `ThenBy`, `ThenByDescending`, `Skip`, and `Take`.
@@ -63,7 +60,7 @@ Each included navigation allows only one unique set of filter operations. In cas
 
 [!code-csharp[Main](../../../../samples/core/Querying/RelatedData/Program.cs#MultipleLeafIncludesFiltered1)]
 
-Instead, identical operations can be applied for each navigation that is included multiple times:
+Alternatively, identical operations can be applied for each navigation that is included multiple times:
 
 [!code-csharp[Main](../../../../samples/core/Querying/RelatedData/Program.cs#MultipleLeafIncludesFiltered2)]
 
@@ -73,14 +70,14 @@ Instead, identical operations can be applied for each navigation that is include
 Example:
 
 ```csharp
-var orders = context.Orders.Where(o => o.Id > 1000).ToList();
+var orders = await context.Orders.Where(o => o.Id > 1000).ToListAsync();
 
 // customer entities will have references to all orders where Id > 1000, rather than > 5000
-var filtered = context.Customers.Include(c => c.Orders.Where(o => o.Id > 5000)).ToList();
+var filtered = await context.Customers.Include(c => c.Orders.Where(o => o.Id > 5000)).ToListAsync();
 ```
 
 > [!NOTE]
-> In case of tracking queries, the navigation on which filtered include was applied is considered to be loaded. This means that EF Core will not attempt to re-load it's values using [explicit loading](xref:core/querying/related-data/explicit) or [lazy loading](xref:core/querying/related-data/lazy), even though some elements could still be missing.
+> In case of tracking queries, the navigation on which filtered include was applied is considered to be loaded. This means that EF Core will not attempt to re-load its values using [explicit loading](xref:core/querying/related-data/explicit) or [lazy loading](xref:core/querying/related-data/lazy), even though some elements could still be missing.
 
 ## Include on derived types
 
@@ -141,9 +138,6 @@ Contents of `School` navigation of all People who are Students can be eagerly lo
   ```
 
 ## Model configuration for auto-including navigations
-
-> [!NOTE]
-> This feature was introduced in EF Core 6.0.
 
 You can configure a navigation in the model to be included every time the entity is loaded from the database using `AutoInclude` method. It has same effect as specifying `Include` with the navigation in every query where the entity type is returned in the results. Following example shows how to configure a navigation to be automatically included.
 
